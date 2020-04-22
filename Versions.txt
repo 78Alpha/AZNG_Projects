@@ -1,4 +1,5 @@
 {
+"SoftwareList" : ["AZNG_Launcher", "PodBuilder", "BinScraper", "Updater", "Setup"]
 "AZNG_Launcher" : "0.0.0",
 "PodBuilder" : "0.0.0",
 "BinScraper" : "0.0.0",
