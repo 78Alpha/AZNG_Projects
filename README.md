@@ -1,11 +1,14 @@
 # AZNG_Projects
 A repository of tools used at Local FCs, built by the same associates that work in them.
 
-## Page Layout
+## Layout
 
-This repository will be the basis and central data retieval source for the applications within. However, this page can not and will not provide any confidential information; this includes the necessary links for with the aplications rely on to work. What this means is that the softwareis licensed freely, but can not function outside of an Amazon FC.
+This repository will be maintained in a clean, however, ever changing layout. Current layout will be comprised such that the downloaded file will extract as...
 
-Version files must be kept for each program in order for updates to be retrieved seemlessly.
+AZNG/Applications  >> Contains all the individual applications; AIO release will be structured differently
+AZNG/Assets  >> Containing images or other art assets used by files
+AZNG/Data  >> Contains configuration files, or junk files to enable betas
+AZNG/Temp  >> Directory should not have files placed in it in the Repo, but for when apps are being updated to ensure safe movement
 
 ## Programs
 
