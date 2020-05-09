@@ -1,9 +1,0 @@
-{
-"SoftwareList" : ["AZNG_Launcher", "PodBuilder", "BinScraper", "Updater", "Setup"]
-"Stable" : "0.0.0"
-"AZNG_Launcher" : "0.0.0",
-"PodBuilder" : "0.0.0",
-"BinScraper" : "0.0.0",
-"Updater" : "0.0.0",
-"Setup" : "0.0.0"
-}
