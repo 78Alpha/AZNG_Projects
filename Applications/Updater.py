@@ -9,6 +9,8 @@ import shutil
 import time
 import hashlib
 
+# Attempt to migrate to class for better module integration and differentiation (may not be useful and hinder performance
+
 #  |||  Exception List  |||  #
 #   0   :   Success
 #   1   :   Value cannot be compared
@@ -212,9 +214,9 @@ def attempt_self_update(temp=None, assets=None, data=None, apps=None, versions_l
             os.system(f"copy Updater.exe {home}")
             # return_value = subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
             open(".\\temp.txt", 'w+').write(str(subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)))
-            breakpoint()
-            time.sleep(10)
-            input()
+            breakpoint()  # Debug step, should not be left in release!
+            time.sleep(10)  # DEBUG STEP; REMOVE
+            input()  # DEBUG STEP; REMOVE
             # sys.exit()
         else:
             return 3
@@ -225,9 +227,9 @@ def download_versions_file(versions_remote=None, versions_loc=None, versions_ver
     :arg versions | The URL to the versions.txt file
     """
     with urllib3.PoolManager().request('GET', f"{versions_remote}", preload_content=False) as down_data, open("Versions.loc", 'wb') as output_file:  # Download the versions file into memory and dump it into an external file
-        shutil.copyfileobj(down_data, output_file)
-        os.system(f"mv {versions_ver} {data}{versions_loc}")
-        output_file.close()
+        shutil.copyfileobj(down_data, output_file)  # Copy downloaded file out of memory and to solid storage
+        os.system(f"mv {versions_ver} {data}{versions_loc}")  # Replace old versions file
+        output_file.close()  # Clear file from memory
 
 
 def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut via the URL file method
@@ -238,15 +240,15 @@ def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut 
     :var icon | The location of the icon file, however, this usually does not work; Reason being a windows bug
     :var clean_home | Convert the back slashes to regular slashes so it works like a URL
     """
-    desktop = os.path.expanduser("~\\Desktop")
-    icon = f"{root}{icon}.ico"
+    desktop = os.path.expanduser("~\\Desktop")  # Grab user desktop path, doesn't quite work if they have Desktop located in OneDrive folder
+    icon = f"{root}{icon}.ico" 
     with open(f"{desktop}\\{application}.url", 'w+') as url_short:
         clean_home = home.replace("\\", "/")
-        url_short.write(f"[InternetShortcut]\nURL=file:///{clean_home}/{application}\nIconFile={root}\\{icon}.ico")
+        url_short.write(f"[InternetShortcut]\nURL=file:///{clean_home}/{application}\nIconFile={root}\\{icon}.ico")  # Create the shortcut file, use URL instead of .lnk for ease
         url_short.close()
     return 0
 
-def error_logging(user_inputs=None, error_log=error_log):
+def error_logging(user_inputs=None, error_log=error_log):  # Attempt logging, the threading may require non-use of GUI
     pass
 
 # attempt_self_update(home=home, my_cwd=my_cwd)
