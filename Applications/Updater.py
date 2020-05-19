@@ -181,34 +181,34 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
         return 1
     return 0
 
-def move_updated_items(application, application_directory, temp_directory):
-    os.system(f"mv {application_directory}{application}.exe {temp_directory}{application}.old")
-    os.system(f"mv {application}.exe {application_directory}{application}.exe")
+def move_updated_items(application, application_directory, temp_directory):  # Move items after update completion, check hash to confirm correctness
+    os.system(f"mv {application_directory}{application}.exe {temp_directory}{application}.old")  # Move current version to temp directory under old to prevent corruption
+    os.system(f"mv {application}.exe {application_directory}{application}.exe")  # Move in place application to application directory
 
 
 def attempt_self_update(temp=None, assets=None, data=None, apps=None, versions_loc=None, versions_ver=None, github_source=None, github_beta=None, root=None, versions=None, home=None):  # Initiate the update process as standalone or add in library
     try:
-        open(f"{data}InitiateBeta.yes", 'r')
-    except FileNotFoundError:
+        open(f"{data}InitiateBeta.yes", 'r')  # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
+    except FileNotFoundError:  # If it does not exist, just continue as normal
         temp_var_exist = 0
-        if os.getcwd() == home:
+        if os.getcwd() == home:  # Launch copied updater from user home in case the updater needs updating
             try:
-                open(f"{home}Updater_T.exe", 'r')
+                open(f"{home}Updater_T.exe", 'r')  # Make sure the upater exists in the home dircetory
                 temp_var_exist = 1
             except FileNotFoundError:
                 pass
-            if temp_var_exist != 0:
-                os.system(f"del {home}Updater.exe")
+            if temp_var_exist != 0:  # if the Updater_T does exist
+                os.system(f"del {home}Updater.exe")  # Delete the original updater application
             else:
                 pass
-            download_versions_file(versions_remote=versions, versions_loc=versions_loc, versions_ver=versions_ver, data=data)
+            download_versions_file(versions_remote=versions, versions_loc=versions_loc, versions_ver=versions_ver, data=data)   # Obtain update data
             # os.system(f"mv {versions_loc} {data}{versions_loc}")
-            with open(f"{data}{versions_loc}", 'r') as version_file:
+            with open(f"{data}{versions_loc}", 'r') as version_file:  # Extract version data and push to variable for later use
                 version_list = version_file.readlines()
                 version_file.close()
 
             # print(f"Updater launched from: {home}")
-        elif os.getcwd() != home:
+        elif os.getcwd() != home:  # If not in the home directory
             os.system(f"copy Updater.exe {home}")
             # return_value = subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
             open(".\\temp.txt", 'w+').write(str(subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)))
