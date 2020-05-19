@@ -251,6 +251,19 @@ def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut 
 def error_logging(user_inputs=None, error_log=error_log):  # Attempt logging, the threading may require non-use of GUI
     pass
 
+def hash_template(file):  # Do not exceed 4 GB or memory will overflow, memory safety not added!
+    file_ = open(file, 'rb').read()
+    file_hash = hashlib.sha256().update(file_).hexdigest()
+    return file_hash
+
+def comp_template(applications, hashes):
+    hashes_ = json.load(hashes)
+    for app in applications:
+        if hashes_(f"app") == hash_template(hash):
+            pass
+        else:
+            break  # Here we would copy back the old file or dowload again
+
 # attempt_self_update(home=home, my_cwd=my_cwd)
 # input()
 # sys.exit()
