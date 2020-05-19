@@ -1,5 +1,5 @@
-# AZNG_Projects
-A repository of tools used at Local FCs, built by the same associates that work in them.
+# AZNG_Projects (Beta)
+A repository of tools used at Local FCs, built by the same associates that work in them. These are the Beta releases and may have Critical bugs that can impact work; Only use in a controlled environment or where error is not a problem.
 
 ## Layout
 
