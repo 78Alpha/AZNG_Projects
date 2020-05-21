@@ -8,6 +8,7 @@ import urllib3
 import shutil
 import time
 import hashlib
+import datetime
 
 # Attempt to migrate to class for better module integration and differentiation (may not be useful and hinder performance
 
@@ -35,7 +36,24 @@ data_directory = f"{home}\\AZNG\\Data\\"
 root = f"{home}\\AZNG\\"
 versions_ver = "Versions.ver"
 versions_loc = "Versions.loc"
-# error_log = open(f"{home}\\AZNG\\error_log.log", 'a+')
+
+
+def char_buf_lim(returned_value):
+    """
+    :param returned_value: The error value return in string format, may be success but needs filtering
+    :var init_len: The length of the string value returned by a process
+    :return: Formatted string with length determined by below (Default: 20)
+    """
+    init_len = len(returned_value)
+    if init_len != 20:  # Check if the string is not 20 Char long
+        if init_len > 20:  # If greater, cut it
+            out = returned_value[:20]  # No longer than determined value
+            return out
+        else:  # Add spacing to assure it is 20
+            out = returned_value + (" " * (20 - init_len))
+            return out
+    else:  # Return okay value
+        return returned_value
 
 
 def get_version(current_folder, versions_loc):  # Extract the versions from the local version file
@@ -50,20 +68,34 @@ def get_version(current_folder, versions_loc):  # Extract the versions from the 
     return verify  # Return the variable instead of an exit code, no safety for failure implemented
 
 
-def download_file(file_name, version, github, app_directory):  # Dwonload a specified file form the REPO
+def download_file(file_name, version, github, app_directory):  # Download a specified file form the REPO
     """
     :arg file_name | File name to be used for the output file of a download
     :arg version | The release version to be targeted
     :arg github | The github source link for use of retrieval
     :arg app_directory | Move downloaded program to main program folder, finishing the update
     """
-    with urllib3.PoolManager().request('GET', f"{github}{version}/{file_name}", preload_content=False) as down_data,\
-            open(f"{file_name}", 'wb') as output_file:  # Download a file in part 1, storing in memory and create file for dumping of that item
-        shutil.copyfileobj(down_data, output_file)  # Copy the downloaded file from memory into a file for permanent storage
-        down_data.close()
-        output_file.close()  # close output file, no further modification should be necessary
-    os.system(f"move {file_name} {app_directory}")  # Operation to move the downloaded file to the correct directory
-    return 0
+    try:
+        with urllib3.PoolManager().request('GET', f"{github}{version}/{file_name}", preload_content=False) as down_data, open(f"{file_name}", 'wb') as output_file:  # Download a file in part 1, storing in memory and create file for dumping of that item
+            shutil.copyfileobj(down_data, output_file)  # Copy the downloaded file from memory into a file for permanent storage
+            down_data.close()
+            output_file.close()  # close output file, no further modification should be necessary
+        os.system(f"move {file_name} {app_directory}")  # Operation to move the downloaded file to the correct directory
+        return "FileDownloaded"  # Process proceeds without fail
+    except:
+        return "FileNotDownloaded"  # Put in log possible errors, split program if necessary
+
+
+def checksum_files(app=None, app_directory=None):
+    master_sum = hashlib.sha512()
+    try:
+        with open(f"{app_directory}{app}", 'rb') as application:
+            binary_data = application.read()
+            application.close()
+        master_sum.update(binary_data)
+        return master_sum.hexdigest()
+    except FileNotFoundError:
+        return "FileNotFound"
 
 
 def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None, app_directory=None):  # Compare version files and program versions
@@ -248,13 +280,12 @@ def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut 
         url_short.close()
     return 0
 
-def error_logging(user_inputs=None, error_log=error_log):  # Attempt logging, the threading may require non-use of GUI
-    pass
 
 def hash_template(file):  # Do not exceed 4 GB or memory will overflow, memory safety not added!
     file_ = open(file, 'rb').read()
     file_hash = hashlib.sha256().update(file_).hexdigest()
     return file_hash
+
 
 def comp_template(applications, hashes):
     hashes_ = json.load(hashes)
@@ -262,8 +293,37 @@ def comp_template(applications, hashes):
         if hashes_(f"app") == hash_template(hash):
             pass
         else:
-            break  # Here we would copy back the old file or dowload again
+            break  # Here we would copy back the old file or download again
 
-# attempt_self_update(home=home, my_cwd=my_cwd)
-# input()
-# sys.exit()
+
+def logging_agent(function, data=data_directory, home=home):
+    """
+    :param function: The function to be logged
+    :param data: The data directory that the log file will be kept in
+    :param home: $HOME; simply used to extract a user name to determine who to speak with and contact of error
+    :var current_date: The current date the log was called
+    :var current_time: The current time the log was called
+    :var user: The extracted user name from the $HOME directory
+    :var values: The actual error or success string to be pushed to log, formatted.
+    :return: Does not return value, writes to file instead
+    """
+    current_date = datetime.date.today()
+    current_time = datetime.datetime.now().strftime("%H:%M:%S")
+    user = home.split('\\')[-1]
+    with open(f"{data}log.txt", 'a+') as logging:  # Open pre-existing log file, included in zip
+        values = char_buf_lim(str(function()[-1]))
+        logging.write(f"{current_date} {current_time} : {str(function)} {values} | {user}\n")  # Flush to log
+
+
+def test_function():  # Debug function used for testing logging
+    import secrets
+    value = 0.3 * 2000.0 / 1293012
+    status = secrets.choice(["SuccessProcess", "Failure", "ThisIsWayTooFingLong"])
+    return [value, status]
+
+
+for i in range(100):
+    logging_agent(test_function)
+
+
+# test_function()
