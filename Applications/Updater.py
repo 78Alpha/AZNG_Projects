@@ -57,46 +57,58 @@ def char_buf_lim(returned_value, spacing=20):
         return returned_value
 
 
-def get_version(current_folder, versions_loc):  # Extract the versions from the local version file
+def get_version(current_folder=None, versions_loc=None):  # Extract the versions from the local version file
     """
     :arg current_folder || This argument is the apps current directory, does not assume for accuracy (AZNG)
     :arg versions_file || The versions.txt file, or any variable containing one
     :var verify || Variable contains the loaded results from the versions file that was downloaded
     """
-    with open(f"{current_folder}\\{versions_loc}", 'r') as software:  # Open the versions file in read mode
-        verify = json.load(software)  # Use json to load the variables, simple formatting
-        software.close()  # close the file from further operation
+    return_value = []
+    try:
+        with open(f"{current_folder}\\{versions_loc}", 'r') as software:  # Open the versions file in read mode
+            try:
+                verify = json.load(software)  # Use json to load the variables, simple formatting
+            except:
+                return [char_buf_lim(str(get_version).split(' ')[1]), return_value, "LoadListFail"]
+            software.close()  # close the file from further operation
+    except:
+        return [char_buf_lim(str(get_version).split(' ')[1]), return_value, "FileReadError"]
     return verify  # Return the variable instead of an exit code, no safety for failure implemented
 
 
-def download_file(file_name, version, github, app_directory):  # Download a specified file form the REPO
+def download_file(file_name=None, version=None, github=None, app_directory=None):  # Download a specified file form the REPO
     """
     :arg file_name | File name to be used for the output file of a download
     :arg version | The release version to be targeted
     :arg github | The github source link for use of retrieval
     :arg app_directory | Move downloaded program to main program folder, finishing the update
     """
+    return_value = []
     try:
-        with logging_agent(urllib3.PoolManager().request('GET', f"{github}{version}/{file_name}", preload_content=False)) as down_data, open(f"{file_name}", 'wb') as output_file:  # Download a file in part 1, storing in memory and create file for dumping of that item
+        with urllib3.PoolManager().request('GET', f"{github}{version}/{file_name}", preload_content=False) as down_data, open(f"{file_name}", 'wb') as output_file:  # Download a file in part 1, storing in memory and create file for dumping of that item
             shutil.copyfileobj(down_data, output_file)  # Copy the downloaded file from memory into a file for permanent storage
             down_data.close()
             output_file.close()  # close output file, no further modification should be necessary
-        os.system(f"move {file_name} {app_directory}")  # Operation to move the downloaded file to the correct directory
-        return "FileDownloaded"  # Process proceeds without fail
+        move = subprocess.call(f"move {file_name} {app_directory}", shell=True)  # Operation to move the downloaded file to the correct directory
+        if move != 0:
+            return_value.append(move)
+            return [char_buf_lim(str(checksum_files).split(' ')[1]), return_value, "MoveFailed"]
+        return [char_buf_lim(str(download_file).split(' ')[1]), return_value, "FileDownloaded"]  # Process proceeds without fail
     except:
-        return "FileNotDownloaded"  # Put in log possible errors, split program if necessary
+        return [char_buf_lim(str(download_file).split(' ')[1]), return_value, "FileNotDownloaded"]  # Put in log possible errors, split program if necessary
 
 
 def checksum_files(app=None, app_directory=None):
+    return_value = []
     master_sum = hashlib.sha512()
     try:
         with open(f"{app_directory}{app}", 'rb') as application:
             binary_data = application.read()
             application.close()
         master_sum.update(binary_data)
-        return [master_sum.hexdigest(), "HashGenerated"]
-    except FileNotFoundError:
-        return "FileNotFound"
+        return [char_buf_lim(str(checksum_files).split(' ')[1]), return_value, "HashGenerated"]
+    except:
+        return [char_buf_lim(str(checksum_files).split(' ')[1]), return_value, "FileNotFound"]
 
 
 def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None, app_directory=None):  # Compare version files and program versions
@@ -114,10 +126,18 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
     :var comparrison_version | same as version_data but for local versions file
     """
     return_value = []
-    software_list = fileversions["SoftwareList"]  # Load data
-    versions_list = versions["SoftwareList"]  # Load data
-    len_software = len(software_list)  # Store length
-    len_versions = len(versions_list)  # store Length
+    software_list = ""
+    versions_list = ""
+    len_software = 0
+    len_versions = 0
+    try:
+        software_list = fileversions["SoftwareList"]  # Load data
+        versions_list = versions["SoftwareList"]  # Load data
+        len_software = len(software_list)  # Store length
+        len_versions = len(versions_list)  # store Length
+        # return [char_buf_lim(str(compare_versions).split(' ')[1]), return_value, "SoftwareLists"]
+    except:
+        return [char_buf_lim(str(compare_versions).split(' ')[1]), return_value, "ListLoadFail"]
     if len_versions > len_software:  # Check if there is a difference in size to the number of programs in remote versions file
         for software in software_list:  # Get software name
             if software not in versions_list:  # Check if the old software is in the new list
@@ -151,7 +171,7 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
                 version_data = versions[f"{software}"].split(".")  # Split version string to digits
                 try:
                     comparison_version = fileversions[f"{software}"].split(".")  # Split version string to digits
-                except KeyError:
+                except:
                     comparison_version = ["0", "0", "0"]  # Default it
                 for i in range(len(version_data)):  # Cycle through the numbers to see if any are different, typically greater
                     if int(version_data[i]) == int(comparison_version[i]):  # If the version is the same, simply pass
@@ -201,7 +221,11 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
     elif len_versions < len_software:
         for software in software_list:  # Get software name
             if software not in versions_list:  # Check if the old software is in the new list
-                os.remove(f"{app_directory}\\{software}")  # Delete aged software
+                deletion = subprocess.call(f"del {app_directory}\\{software}", shell=True)
+                if deletion != 0:
+                    return_value.append(deletion)
+                    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "DeleteItemFail"]
+                # os.remove(f"{app_directory}\\{software}")  # Delete aged software
         for software in versions_list:  # get software name
             need_update = False  # set needing update to false
             version_data = versions[f"{software}"].split(".")  # Split version string to digits
@@ -216,13 +240,13 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
                 else:
                     need_update = True  # Tag it to needing an update if version is different
             if need_update:  # If it does need an update, then update it
-                download_file(file_name=software,
+                logging_agent(download_file(file_name=software,
                               version=versions[f"{software}"],
                               github=github_source,
-                              app_directory=app_directory)  # Download the file
-                create_shortcut_url(application=software,
+                              app_directory=app_directory))  # Download the file
+                logging_agent(create_shortcut_url(application=software,
                                     home=home,
-                                    icon=f"{app_directory}\\Assets\\{software}.ico")  # Give it a dirty shortcut
+                                    icon=f"{app_directory}\\Assets\\{software}.ico"))  # Give it a dirty shortcut
             else:
                 pass
     else:
@@ -230,72 +254,95 @@ def compare_versions(fileversions="LOCAL", versions="REMOTE", github_source=None
     return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemMoveAttempt"]
 
 
-def move_updated_items(application, application_directory, temp_directory):  # Move items after update completion, check hash to confirm correctness
+def move_updated_items(application=None, application_directory=None, temp_directory=None):  # Move items after update completion, check hash to confirm correctness
     return_value = []
-    # os.system(f"mv {application_directory}{application}.exe {temp_directory}{application}.old")  # Move current version to temp directory under old to prevent corruption
-    # os.system(f"mv {application}.exe {application_directory}{application}.exe")  # Move in place application to application directory
-    move_to_old = subprocess.call(f"mv {application_directory}{application}.exe {temp_directory}{application}.old", shell=True)
+    # os.system(f"move {application_directory}{application}.exe {temp_directory}{application}.old")  # Move current version to temp directory under old to prevent corruption
+    # os.system(f"move {application}.exe {application_directory}{application}.exe")  # Move in place application to application directory
+    move_to_old = subprocess.call(f"move {application_directory}{application}.exe {temp_directory}{application}.old", shell=True)
     if int(move_to_old) != 0:
         return_value.append(move_to_old)
         return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "FailedToOld"]
-    move_updated = subprocess.call(f"mv {application}.exe {application_directory}{application}.exe", shell=True)
+    move_updated = subprocess.call(f"move {application}.exe {application_directory}{application}.exe", shell=True)
     if int(move_updated) != 0:
         return_value.append(move_updated)
         return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "FailedToUpdate"]
     return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemMoveSuccess"]
 
+
 def attempt_self_update(temp=None, assets=None, data=None, apps=None, versions_loc=None, versions_ver=None, github_source=None, github_beta=None, root=None, versions=None, home=None):  # Initiate the update process as standalone or add in library
     return_value = []
     try:
         open(f"{data}InitiateBeta.yes", 'r')  # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
-    except FileNotFoundError:  # If it does not exist, just continue as normal
+    except:  # If it does not exist, just continue as normal
         temp_var_exist = 0
         if os.getcwd() == home:  # Launch copied updater from user home in case the updater needs updating
             try:
                 open(f"{home}Updater_T.exe", 'r')  # Make sure the updater exists in the home directory
                 temp_var_exist = 1
-            except FileNotFoundError:
+            except:
                 pass
             if temp_var_exist != 0:  # if the Updater_T does exist
-                os.system(f"del {home}Updater.exe")  # Delete the original updater application
+                deletion = subprocess.call(f"del {home}Updater.exe", shell=True)
+                if deletion != 0:
+                    return_value.append(deletion)
+                    return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "DeleteFail"]
+                # os.system(f"del {home}Updater.exe")  # Delete the original updater application
             else:
                 pass
-            download_versions_file(versions_remote=versions, versions_loc=versions_loc, versions_ver=versions_ver, data=data)   # Obtain update data
-            # os.system(f"mv {versions_loc} {data}{versions_loc}")
+            logging_agent(download_ver_file(versions_remote=versions, versions_loc=versions_loc, versions_ver=versions_ver, data=data))   # Obtain update data
+            # os.system(f"move {versions_loc} {data}{versions_loc}")
             try:
                 with open(f"{data}{versions_loc}", 'r') as version_file:  # Extract version data and push to variable for later use
                     version_list = version_file.readlines()
                     version_file.close()
             except:
                 return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "FileReadError"]
-
             # print(f"Updater launched from: {home}")
         elif os.getcwd() != home:  # If not in the home directory
             # os.system(f"copy Updater.exe {home}")
-            subprocess.call()
+            # subprocess.call()
             # return_value = subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
-            open(".\\temp.txt", 'w+').write(str(subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)))
-            breakpoint()  # Debug step, should not be left in release!
-            time.sleep(10)  # DEBUG STEP; REMOVE
-            input()  # DEBUG STEP; REMOVE
+            # open(".\\temp.txt", 'w+').write(str(subprocess.check_output([f"start {home}\\Updater_Micro.exe; exit 0"], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)))
+            # breakpoint()  # Debug step, should not be left in release!
+            # time.sleep(10)  # DEBUG STEP; REMOVE
+            # input()  # DEBUG STEP; REMOVE
             # sys.exit()
+            return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "MasterError"]
         else:
-            return return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "DirectoryError"]
+            return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "DirectoryError"]
 
 
-def download_versions_file(versions_remote=None, versions_loc=None, versions_ver=None, data=None):  # Retrieve the most recent version file from the Github Repo
+def download_ver_file(versions_remote=None, versions_loc=None, versions_ver=None, data=None):  # Retrieve the most recent version file from the Github Repo
     """
     :arg versions | The URL to the versions.txt file
     """
     return_value = []
-    with urllib3.PoolManager().request('GET', f"{versions_remote}", preload_content=False) as down_data, open("Versions.loc", 'wb') as output_file:  # Download the versions file into memory and dump it into an external file
-        shutil.copyfileobj(down_data, output_file)  # Copy downloaded file out of memory and to solid storage
-        os.system(f"mv {versions_ver} {data}{versions_loc}")  # Replace old versions file
-        output_file.close()  # Clear file from memory
-    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "DownloadPushed"]
+    try:
+        with urllib3.PoolManager().request('GET', f"{versions_remote}", preload_content=False) as down_data, open("Versions.loc", 'wb') as output_file:  # Download the versions file into memory and dump it into an external file
+            shutil.copyfileobj(down_data, output_file)  # Copy downloaded file out of memory and to solid storage
+            size_file = os.path.getsize(output_file)
+            if size_file > 0:
+                pass
+            else:
+                return_value.append(size_file)
+                return [char_buf_lim(str(download_ver_file).split(' ')[1]), return_value, "DownloadEmpty"]
+            move_download = subprocess.call(f"move {versions_ver} {data}{versions_loc}")
+            if move_download != 0:
+                return_value.append(move_download)
+                return [char_buf_lim(str(download_ver_file).split(' ')[1]), return_value, "MoveFail"]
+            # os.system(f"move {versions_ver} {data}{versions_loc}")  # Replace old versions file
+            output_file.close()  # Clear file from memory
+        try:
+            size_file = os.path.getsize()
+        except:
+            return [char_buf_lim(str(download_ver_file()).split(' ')[1]), return_value, "FileNotFound"]
+        return [char_buf_lim(str(download_ver_file).split(' ')[1]), return_value, "DownloadPushed"]
+    except:
+        return_value.append("URLLIB3")
+        return [char_buf_lim(str(download_ver_file).split(' ')[1]), return_value, "ExceedTries"]
 
 
-def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut via the URL file method
+def create_shortcut_url(application=None, root=None, icon=None):  # Create a desktop  shortcut via the URL file method
     """
     :arg application | Name of the application that the shortcut is being created
     :arg home | User home directory, used to extract Desktop and as a point of reference for where the application is stored
@@ -311,25 +358,31 @@ def create_shortcut_url(application, root, icon):  # Create a desktop  shortcut 
             clean_home = home.replace("\\", "/")
             url_short.write(f"[InternetShortcut]\nURL=file:///{clean_home}/{application}\nIconFile={root}\\{icon}.ico")  # Create the shortcut file, use URL instead of .lnk for ease
             url_short.close()
-        return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "URLCreated"]
+        return [char_buf_lim(str(create_shortcut_url).split(' ')[1]), return_value, "URLCreated"]
     except FileNotFoundError:
-        return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "URLCreationError"]
+        return [char_buf_lim(str(create_shortcut_url).split(' ')[1]), return_value, "URLCreationError"]
 
 
-def hash_template(file):  # Do not exceed 4 GB or memory will overflow, memory safety not added!
+def hash_template(file=None):  # Do not exceed 4 GB or memory will overflow, memory safety not added!
     return_value = []
-    file_ = open(file, 'rb').read()
+    try:
+        file_ = open(file, 'rb').read()
+    except:
+        return [char_buf_lim(str(hash_template).split(' ')[1]), return_value, "FileReadError"]
     try:
         file_hash = hashlib.sha512().update(file_).hexdigest()
     except:
-        return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "HashingError"]
+        return [char_buf_lim(str(hash_template).split(' ')[1]), return_value, "HashingError"]
     return_value.append(file_hash)
-    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "HashReturned"]
+    return [char_buf_lim(str(hash_template).split(' ')[1]), return_value, "HashReturned"]
 
 
-def comp_template(applications, hashes):
-    hashes_ = json.load(hashes)
+def comp_template(applications=None, hashes=None):
     return_value = []
+    try:
+        hashes_ = json.load(hashes)
+    except:
+        return [char_buf_lim(str(comp_template).split(' ')[1]), return_value, "FileLoadError"]
     for app in applications:
         if hashes_(f"{app}") == hash_template(app)[1][0]:
             pass
@@ -337,7 +390,7 @@ def comp_template(applications, hashes):
         else:
             return_value.append(app)
             return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "HashMismatch"]
-    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "HashesMatch"]  # Here we would copy back the old file or download again
+    return [char_buf_lim(str(comp_template).split(' ')[1]), return_value, "HashesMatch"]  # Here we would copy back the old file or download again
 
 
 def logging_agent(function, data=data_directory, home=home):
@@ -374,10 +427,14 @@ def test_function2(arg1):
     return [char_buf_lim(str(test_function2).split(' ')[1]), return_values, "ReturnStatus"]
 
 
-for i in range(100):
-    logging_agent(test_function(1234))
-    time.sleep(secrets.randbelow(2))
-    logging_agent(test_function2(1234))
+logging_agent(download_ver_file())
+logging_agent(create_shortcut_url())
+logging_agent(comp_template())
+logging_agent(hash_template())
+logging_agent(attempt_self_update())
+logging_agent(move_updated_items())
+logging_agent(compare_versions())
+logging_agent(checksum_files())
+logging_agent(get_version())
+logging_agent(download_file())
 
-
-# test_function()
