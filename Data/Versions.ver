@@ -1,10 +1,8 @@
 {
-"SoftwareList" : ["AZNG_Launcher", "PodBuilder", "BinScraper", "Updater", "Setup", "AIO"]
-"Stable" : "0.0.0"
-"Beta" : "0.0.0",
-"AZNG_Launcher" : "0.0.0",
-"PodBuilder" : "0.0.0",
-"BinScraper" : "0.0.0",
-"Updater" : "0.0.0",
-"Setup" : "0.0.0"
+"SoftwareList" : ["AZNG_Launcher", "PodBuilder", "BinScraper", "Updater", "Setup", "AIO"],
+"AZNG_Launcher" : "0.0.1",
+"PodBuilder" : "0.0.1",
+"BinScraper" : "0.0.1",
+"Updater" : "0.0.1",
+"Setup" : "0.0.1"
 }
