@@ -9,8 +9,9 @@ import shutil
 import hashlib
 import datetime
 import secrets
+import glob
 
-from Applications.logging_agent import *
+# from logging_agent import *
 
 # Attempt to migrate to class for better module integration and differentiation (may not be useful and hinder performance
 
@@ -129,11 +130,11 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
                 # os.remove(f"{app_directory}\\{software}")  # Delete aged software
                 if deletion != 0:
                     return_value.append(deletion)
-                    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemDeleteFailed"]
+                    return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "ItemDeleteFailed"]
         for software in versions_list:  # Get software name
             if software not in versions_list:  # If it doesn't exist, get it
                 logging_agent(download_file(file_name=software,
-                              version=versions["Stable"],
+                              version=versions[f"{software}"],
                               github=github_source,
                               app_directory=app_directory))  # Download the missing file from the stable branch
                 logging_agent(create_shortcut_url(application=software,
@@ -148,7 +149,7 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
                     deletion = subprocess.call(f"del {app_directory}\\{software}", shell=True)
                     if deletion != 0:
                         return_value.append(deletion)
-                        return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemDeleteFail"]
+                        return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "ItemDeleteFail"]
                     # os.remove(f"{app_directory}\\{software}")  # Delete aged software
             for software in versions_list:  # get software name
                 need_update = False  # set needing update to false
@@ -257,17 +258,18 @@ def attempt_self_update():  # Initiate the update process as standalone or add i
     return_value = []
     beta_key = False
     try:
-        open(f"{data_directory}InitiateBeta.yes", 'r')  # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
+        open(f"{data_directory}InitiateBeta.yes", 'r') # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
+        return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "BetaFound"]
     except:  # If it does not exist, just continue as normal
         temp_var_exist = 0
-        if os.getcwd() == temp_directory:  # Launch copied updater from user home in case the updater needs updating
+        if "Core_T.exe" in glob.glob(f"{temp_directory}*.*"):  # Launch copied updater from user home in case the updater needs updating
             try:
-                open(f"{temp_directory}Updater_T.exe", 'r')  # Make sure the updater exists in the home directory
+                open(f"{temp_directory}Core_T.exe", 'r')  # Make sure the updater exists in the home directory
                 temp_var_exist = 1
             except:
                 pass
             if temp_var_exist != 0:  # if the Updater_T does exist
-                deletion = subprocess.call(f"del {temp_directory}Updater.exe", shell=True)
+                deletion = subprocess.call(f"del {temp_directory}Core_T.exe", shell=True)
                 if deletion != 0:
                     return_value.append(deletion)
                     return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "DeleteFail"]
@@ -290,17 +292,20 @@ def attempt_self_update():  # Initiate the update process as standalone or add i
                 return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "FileReadError"]
             # print(f"Updater launched from: {home}")
             logging_agent(compare_versions(fileversions=version_list, versions=version_list_remote))
-        elif os.getcwd() != temp_directory:  # If not in the home directory
-            shell_call = subprocess.call(f"copy {app_directory}Updater.exe {temp_directory}Updater_T.exe", shell=True)
+        elif "Core_T.exe" in glob.glob(f"{temp_directory}*.*"):  # If not in the home directory
+            print("Core_T.exe" in glob.glob(f"{temp_directory}"))
+            time.sleep(10)
+            shell_call = subprocess.call(f"copy {app_directory}Core.exe {temp_directory}Core_T.exe", shell=True)
             if shell_call != 0:
                 return_value.append(shell_call)
                 return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "CopyError"]
             else:
                 try:
-                    open(f"{temp_directory}Updater_T.exe").read()
+                    open(f"{temp_directory}Core_T.exe").close()
                 except:
                     return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "UpdaterFindErr"]
-                update_call = subprocess.call(f"{temp_directory}Updater_T.exe", shell=True)
+                update_call = subprocess.call(f"start {temp_directory}Core_T.exe", shell=True)
+                print(update_call)
                 if update_call != 0:
                     return_value.append(update_call)
                     return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "UpdaterLaunchErr"]
@@ -308,6 +313,7 @@ def attempt_self_update():  # Initiate the update process as standalone or add i
                     sys.exit()
             # return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "MasterError"]
         else:
+            print(glob.glob(f"{temp_directory}*.*"))
             return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "DirectoryError"]
 
 
@@ -413,14 +419,44 @@ def test_function2(arg1):
     return [char_buf_lim(str(test_function2).split(' ')[1]), return_values, "ReturnStatus"]
 
 
-logging_agent(download_ver_file())
-logging_agent(create_shortcut_url())
-logging_agent(comp_template())
-logging_agent(hash_template())
+def char_buf_lim(returned_value, spacing=20):
+    """
+    :param spacing: Spacing of characters to adhere to the log method
+    :param returned_value: The error value return in string format, may be success but needs filtering
+    :var init_len: The length of the string value returned by a process
+    :return: Formatted string with length determined by below (Default: 20)
+    """
+    init_len = len(returned_value)
+    if init_len != spacing:  # Check if the string is not 20 Char long
+        if init_len > spacing:  # If greater, cut it
+            out = returned_value[:spacing]  # No longer than determined value
+            return out
+        else:  # Add spacing to assure it is 20
+            out = returned_value + (" " * (spacing - init_len))
+            return out
+    else:  # Return okay value
+        return returned_value
+
+
+def logging_agent(function=None, data=data_directory, home=home):
+    """
+    :param function: The function to be logged
+    :param data: The data directory that the log file will be kept in
+    :param home: $HOME; simply used to extract a user name to determine who to speak with and contact of error
+    :var current_date: The current date the log was called
+    :var current_time: The current time the log was called
+    :var user: The extracted user name from the $HOME directory
+    :var values: The actual error or success string to be pushed to log, formatted.
+    :return: Does not return value, writes to file instead
+    """
+    current_date = str(datetime.date.today())
+    current_time = str(datetime.datetime.now().strftime("%H:%M:%S"))
+    user = home.split('\\')[-1]
+    with open(f"{data}log.txt", 'a+') as logging:  # Open pre-existing log file, included in zip
+        values = char_buf_lim(str(function[-1]))
+        logging.write(f"{char_buf_lim(current_date, 10)} {char_buf_lim(current_time, 8)} : {str(function[0])} {values} | {user}\n")  # Flush to log
+    return function
+
+
 logging_agent(attempt_self_update())
-logging_agent(move_updated_items())
-logging_agent(compare_versions())
-logging_agent(checksum_files())
-logging_agent(get_version())
-logging_agent(download_file())
 
