@@ -22,9 +22,9 @@ import glob
 #   3   :   Update Crash, can't determine CWD or HOME
 #  ________________________  #
 
-versions = ""  # lINK TO VERSIONS FILE; DON'T DELETE!
+versions = "https://raw.githubusercontent.com/78Alpha/AZNG_Projects/Beta/Data/Versions.ver"
 
-versions_beta = "https://github.com/78Alpha/AZNG_Projects/blob/Beta/Data/Versions.ver"
+versions_beta = "https://raw.githubusercontent.com/78Alpha/AZNG_Projects/Beta/Data/Versions.ver"
 
 github_source = "https://github.com/78Alpha/AZNG_Projects/releases/"  # Source of distributed software, used for downloading
 
@@ -134,11 +134,8 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
         for software in versions_list:  # Get software name
             if software not in versions_list:  # If it doesn't exist, get it
                 logging_agent(download_file(file_name=software,
-                              version=versions[f"{software}"],
-                              github=github_source,
-                              app_directory=app_directory))  # Download the missing file from the stable branch
+                              version=versions[f"{software}"]))  # Download the missing file from the stable branch
                 logging_agent(create_shortcut_url(application=software,
-                                    home=home,
                                     icon=f"{app_directory}\\Assets\\{software}.ico"))  # Create a basic URL shortcut on the desktop
             else:
                 pass
@@ -165,11 +162,8 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
                         need_update = True  # Tag it to needing an update if version is different
                 if need_update:  # If it does need an update, then update it
                     logging_agent(download_file(file_name=software,
-                                  version=versions[f"{software}"],
-                                  github=github_source,
-                                  app_directory=app_directory))  # Download the file
+                                  version=versions[f"{software}"]))  # Download the file
                     logging_agent(create_shortcut_url(application=software,
-                                        home=home,
                                         icon=f"{app_directory}\\Assets\\{software}.ico"))  # Give it a dirty shortcut
                 else:
                     pass
@@ -195,11 +189,8 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
                         need_update = True  # Tag it to needing an update if version is different
                 if need_update:  # If it does need an update, then update it
                     logging_agent(download_file(file_name=software,
-                                  version=versions[f"{software}"],
-                                  github=github_source,
-                                  app_directory=app_directory))  # Download the file
+                                  version=versions[f"{software}"]))  # Download the file
                     logging_agent(create_shortcut_url(application=software,
-                                        home=home,
                                         icon=f"{app_directory}\\Assets\\{software}.ico"))  # Give it a dirty shortcut
                 else:
                     pass
@@ -226,28 +217,25 @@ def compare_versions(fileversions=None, versions=None):  # Compare version files
                     need_update = True  # Tag it to needing an update if version is different
             if need_update:  # If it does need an update, then update it
                 logging_agent(download_file(file_name=software,
-                              version=versions[f"{software}"],
-                              github=github_source,
-                              app_directory=app_directory))  # Download the file
+                              version=versions[f"{software}"]))  # Download the file
                 logging_agent(create_shortcut_url(application=software,
-                                    home=home,
                                     icon=f"{app_directory}\\Assets\\{software}.ico"))  # Give it a dirty shortcut
             else:
                 pass
     else:
-        return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemMoveAttempt"]
-    return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "ItemMoveAttempt"]
+        return [char_buf_lim(str(compare_versions).split(' ')[1]), return_value, "ItemMoveAttempt"]
+    return [char_buf_lim(str(compare_versions).split(' ')[1]), return_value, "ItemMoveAttempt"]
 
 
 def move_updated_items(application=None):  # Move items after update completion, check hash to confirm correctness
     return_value = []
     # os.system(f"move {application_directory}{application}.exe {temp_directory}{application}.old")  # Move current version to temp directory under old to prevent corruption
     # os.system(f"move {application}.exe {application_directory}{application}.exe")  # Move in place application to application directory
-    move_to_old = subprocess.call(f"move {app_directory}{application}.exe {temp_directory}{application}.old", shell=True)
+    move_to_old = subprocess.call(f"move '{app_directory}{application}.exe' '{temp_directory}{application}.old'", shell=True)
     if int(move_to_old) != 0:
         return_value.append(move_to_old)
         return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "FailedToOld"]
-    move_updated = subprocess.call(f"move {application}.exe {app_directory}{application}.exe", shell=True)
+    move_updated = subprocess.call(f"move '{application}.exe' '{app_directory}{application}.exe'", shell=True)
     if int(move_updated) != 0:
         return_value.append(move_updated)
         return [char_buf_lim(str(test_function2).split(' ')[1]), return_value, "FailedToUpdate"]
@@ -258,11 +246,12 @@ def attempt_self_update():  # Initiate the update process as standalone or add i
     return_value = []
     beta_key = False
     try:
-        open(f"{data_directory}InitiateBeta.yes", 'r') # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
-        return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "BetaFound"]
+        open(f"{data_directory}InitiateBeta.yes", 'r')  # If 'Beta' file exists, enter the beta mode, download experimental versions from Dev branch
+        # return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "BetaFound"]
     except:  # If it does not exist, just continue as normal
         temp_var_exist = 0
-        if "Core_T.exe" in glob.glob(f"{temp_directory}*.*"):  # Launch copied updater from user home in case the updater needs updating
+        if f"{temp_directory}Core_T.exe" in glob.glob(f"{temp_directory}*.*"):  # Launch copied updater from user home in case the updater needs updating
+            print(f"{temp_directory}Core_T.exe" in glob.glob(f"{temp_directory}*.*"))
             try:
                 open(f"{temp_directory}Core_T.exe", 'r')  # Make sure the updater exists in the home directory
                 temp_var_exist = 1
@@ -280,21 +269,20 @@ def attempt_self_update():  # Initiate the update process as standalone or add i
             # os.system(f"move {versions_loc} {data}{versions_loc}")
             try:
                 with open(f"{data_directory}{versions_loc}", 'r') as version_file:  # Extract version data and push to variable for later use
-                    version_list = version_file.readlines()
+                    version_list = json.load(version_file)
                     version_file.close()
             except:
                 return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "FileReadError"]
             try:
                 with open(f"{data_directory}{versions_ver}", 'r') as version_list_remote:  # Extract version data and push to variable for later use
-                    version_list_remote = version_file.readlines()
+                    version_list_remote = json.load(version_list_remote)
                     version_file.close()
             except:
                 return [char_buf_lim(str(attempt_self_update).split(' ')[1]), return_value, "FileReadError"]
             # print(f"Updater launched from: {home}")
             logging_agent(compare_versions(fileversions=version_list, versions=version_list_remote))
-        elif "Core_T.exe" in glob.glob(f"{temp_directory}*.*"):  # If not in the home directory
-            print("Core_T.exe" in glob.glob(f"{temp_directory}"))
-            time.sleep(10)
+        elif f"{temp_directory}Core_T.exe" not in glob.glob(f"{temp_directory}*.*"):  # If not in the home directory
+            print(f"{temp_directory}Core_T.exe" in glob.glob(f"{temp_directory}"))
             shell_call = subprocess.call(f"copy {app_directory}Core.exe {temp_directory}Core_T.exe", shell=True)
             if shell_call != 0:
                 return_value.append(shell_call)
@@ -330,7 +318,7 @@ def download_ver_file():  # Retrieve the most recent version file from the Githu
         with urllib3.PoolManager().request('GET', f"{versions}", preload_content=False) as down_data, open(f"{data_directory}{versions_ver}", 'wb+') as output_file:  # Download the versions file into memory and dump it into an external file
             shutil.copyfileobj(down_data, output_file)  # Copy downloaded file out of memory and to solid storage
             try:
-                size_file = os.path.getsize(versions_loc)
+                size_file = 1
             except:
                 return [char_buf_lim(str(download_ver_file).split(' ')[1]), return_value, "GetSizeFail"]
             if size_file > 0:
@@ -453,8 +441,15 @@ def logging_agent(function=None, data=data_directory, home=home):
     current_time = str(datetime.datetime.now().strftime("%H:%M:%S"))
     user = home.split('\\')[-1]
     with open(f"{data}log.txt", 'a+') as logging:  # Open pre-existing log file, included in zip
-        values = char_buf_lim(str(function[-1]))
-        logging.write(f"{char_buf_lim(current_date, 10)} {char_buf_lim(current_time, 8)} : {str(function[0])} {values} | {user}\n")  # Flush to log
+        try:
+            values = char_buf_lim(str(function[-1]))
+        except:
+            values = "ERROR"
+        try:
+            funct_name = str(function[0])
+        except:
+            funct_name = "ERROR"
+        logging.write(f"{char_buf_lim(current_date, 10)} {char_buf_lim(current_time, 8)} : {funct_name} {values} | {user}\n")  # Flush to log
     return function
 
 
