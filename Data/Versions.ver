@@ -4,5 +4,6 @@
 "PodBuilder" : "0.0.1",
 "BinScraper" : "0.0.1",
 "Updater" : "0.0.1",
-"Setup" : "0.0.1"
+"Setup" : "0.0.1",
+"AIO" : "0.0.1"
 }
