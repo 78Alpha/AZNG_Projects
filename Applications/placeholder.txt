@@ -1,1 +1,130 @@
-b��*��d��̆��7~�� '[Aew�ܮ/_b����Sm �~2ߞ
+from Crypto import Random
+from Crypto.Cipher import AES
+from Crypto.Cipher import AES
+import codecs
+import socket
+import secrets
+import math
+import random
+import hashlib
+import codecs
+import webbrowser
+import base64
+import json
+import urllib3
+import shutil
+
+_HOST_NAME_ = str(socket.getfqdn())
+
+_Master_Hash_ = "79d4871b65ae571ce1917646a2eb8e9889b2be51d60406278e14e14dab90aedb0c231aa38788d512e35b4197033fbabecd7c3d24016e6baeca9ea3d164df11e1"
+
+
+def char_to_num(arg=None):
+    new_list = []
+    for item in arg:
+        try:
+            valueless = item / 1.0
+            new_list.append(float(item))
+        except:
+            new_list.append((ord(item.lower()) - 96))
+    return new_list
+
+
+def hashing(arg=None):
+    step1 = hashlib.sha512(arg.encode('UTF-8'))
+    # step2 = step1.update()
+    step2 = step1.hexdigest()
+    return step2
+
+
+def extension(hash=None):
+    master = 1.0
+    count = 0
+    back_variable = 0.0
+    if (len(hash) % 2) == 0:
+        for item in hash:
+            master *= item
+    else:
+        return "ERR"
+    return master
+
+
+def seed_maker():
+    random.seed(extension(char_to_num(hashing(_HOST_NAME_))))
+
+    rand_check_value = random.randint(2 ** 32, 2 ** 64)
+
+    if hashing(str(rand_check_value)) == _Master_Hash_:
+        return rand_check_value
+
+
+true_key = bytes(str(seed_maker())[3:].encode('UTF-8'))
+
+
+def pad(s):
+    return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
+
+def encrypt(plaintext_data, key, key_size=256):
+    data = pad(plaintext_data)
+    iv = Random.new().read(AES.block_size)
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    return iv + cipher.encrypt(data)
+
+def decrypt(encrypted_data, key):
+    iv = encrypted_data[:AES.block_size]
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    plaintext_data = cipher.decrypt(encrypted_data[AES.block_size:])
+    return plaintext_data.rstrip(b"\0")
+
+def encrypt_file(enc_file, key):
+    with open(enc_file, 'rb') as plain_to_encrypt:
+        plaintext_data = plain_to_encrypt.read()
+    enc = encrypt(plaintext_data, key)
+    with open(enc_file + ".enc", 'wb') as enc_to_file:
+        enc_to_file.write(enc)
+
+def decrypt_file(dec_file, key):
+    with open(dec_file, 'rb') as file_to_decrypt:
+        ciphertext = file_to_decrypt.read()
+    dec = decrypt(ciphertext, key)
+    with open("OUTFILE.DEC", 'wb') as decrypt_to_file:  # dec_file[:-4]
+        decrypt_to_file.write(dec)
+
+
+def decrypt_url(dec_url, key):
+    dec = decrypt(dec_url, key)
+    with open("OUTFILE.DEC", 'wb') as decrypt_to_file:  # dec_file[:-4]
+        decrypt_to_file.write(dec)
+
+def download_file(url):
+    with urllib3.PoolManager().request('GET', url,
+                                       preload_content=False) as down_data, open("downloaded_file",
+                                                                                 'wb+') as output_file:  # Download a file in part 1, storing in memory and create file for dumping of that item
+        shutil.copyfileobj(down_data,
+                           output_file)  # Copy the downloaded file from memory into a file for permanent storage
+        down_data.close()
+        # temp_var = output_file.read()
+        output_file.close()
+        # temp_var = "downloaded_file" #open("downloaded_file", 'rb').read()
+
+# key = b'\xbf\xc0\x85)\x10nc\x94\x02)j\xdf\xcb\xc4\x94\x9d(\x9e[EX\xc8\xd5\xbfI{\xa2$\x05(\xd5\x18'
+
+key = true_key
+
+# encrypt_file('ENC_FILE', key)
+# decrypt_file('sometext.txt.enc', key)
+
+# download_file("https://raw.githubusercontent.com/78Alpha/AZNG_Projects/Beta/Applications/placeholder.txt")
+decrypt_file("downloaded_file", key)
+# print(val)
+# with open("downloaded_file", 'rb') as output_file:
+#     data = output_file.read()
+#     output_file.close()
+#
+# print(data)
+# decrypt_url(pad(data), key)
+# decrypt_file(val, key)
+# print(open("OUTFILE.DEC", 'r').read())
+# print(val)
+# webbrowser.open_new_tab(download_file(open("OUTFILE.DEC", 'rb').read().decode('UTF-8')).decode('UTF-8'))
+
