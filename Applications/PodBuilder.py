@@ -13,14 +13,26 @@ from Crypto.Cipher import AES
 from Crypto.Cipher import AES
 
 
+"""
+    Function: key_gen() | Uses the net_interface to generate a unique key and hash it fo later use, is not functional on its own
+"""
+
+
 def key_gen():
+    """
+    :var host_list: Get the host name from current network, expects ASIN282 access
+    :var _HOST_NAME_: Join host parts without front face unique tag, this allows use of all internal computers
+    :var _Hash_Master_: Hashes the host name into a unique key using modern sha512
+    :var random_key: A 16 bytes key pulled from seed-random addition, is a bytes like string for AES encryption
+    :return: "Random" key to be ejected and used in encryption steps
+    """
     host_list = (str(socket.getfqdn()).split('.'))
-    host_list.pop(0)
+    host_list.pop(0)  # Remove the initial identifier, it causes problems over cross facility
     _HOST_NAME_ = "".join(host_list)
     _Hash_Master_ = hashlib.sha512(_HOST_NAME_.encode('UTF-8')).hexdigest()
-    random.seed(abs(sum(char_to_num(_Hash_Master_))))
+    random.seed(abs(sum(char_to_num(_Hash_Master_))))  # Set seed to be a constant in the right facility, requires Amazon internal access
     random_key = b""
-    for i in range(16):
+    for i in range(16):  # Iterate to create the 16 byte key
         lib2 = [b'a', b'b', b'c', b'd', b'e', b'f', b'g', b'h', b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q',
                 b'r', b's', b't', b'u', b'v', b'w', b'x', b'y', b'z', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8',
                 b'9', b'0']
@@ -28,22 +40,52 @@ def key_gen():
     return random_key
 
 
+"""
+    Function: char_to_num() | Changes characters to mutable/functional numbers, this allows a set digit for force merge in seed generation
+"""
+
+
 def char_to_num(arg=None):
+    """
+    :param arg: takes input list and converts to float value
+    :var new_list: New list containing only digits, no alpha characters
+    :return: New list of only numbers
+    """
     new_list = []
-    for item in arg:
+    for item in arg:  # Cycle through characters and identify numbers vs digits, must exit with all numbers
         try:
-            valueless = item / 1.0
+            valueless = item / 1.0  # Attempt to use char as number, if fail, then convert to num
             new_list.append(float(item))
         except:
-            new_list.append((ord(item.lower()) - 96))
+            new_list.append((ord(item.lower()) - 96))  # numberfy the letters
     return new_list
 
 
+"""
+    Function: pad() | Add padding bytes to adhere to AES block size
+"""
+
+
 def pad(s):
+    """
+    :param s: Some data needing padding
+    :return: Padded data needing stripping
+    """
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 
 
+"""
+    Function: encrypt() | Encrypts data, but is not outwardly accessible to the user
+"""
+
+
 def encrypt(plaintext_data, key, key_size=256):
+    """
+    :param plaintext_data: Data needing to be encrypted
+    :param key: The key used for encryption, can be anything but will require certain physical parameters to decrypt
+    :param key_size: UNKNOWN
+    :return: Return IV and encrypted data
+    """
     data = pad(plaintext_data)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
