@@ -20,6 +20,7 @@ def filtration(_V_ASIN_,_C_INPUT_FILE_):
         if _V_ASIN_ in line and 'P-' in line:
             if 'P-' in line.split('	')[0] and len(line.split('	')[0]) == 12:
                 master_bins.append(line.split('	')[0])
+    master_bins = list(dict.fromkeys(master_bins))
     return master_bins
 
 
