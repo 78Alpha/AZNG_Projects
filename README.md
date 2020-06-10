@@ -13,16 +13,15 @@ AZNG/Temp  >> Directory should not have files placed in it in the Repo, but for 
 ## Programs
 
 * AZNG Launcher
-* BinScraper
+* BinFilter
 * PodBuilder
 * Updater
-* Setup
 
 ### AZNG Launcher
 
 This application serves as the main launcher for FC associates. It will launch a session related to the role they have selected and provide them with the corrisponding or most relevent Labor Tracking code. This launcher relies on internal Amazon links and is not suitable for external uses without modification.
 
-### BinScraper
+### BinFilter
 
 This application scrapes bin labels from an FC Research session. It must be able to intake 2 specific formats and back test both at all times. The end result is a list of printable bin labels. This is suitable for "item hunt" sessions.
 
@@ -33,7 +32,3 @@ Pod Builder is a standalone application that is meant to work with Pod console i
 ### Updater
 
 The application responsible for retrieving application updates and downloading new applications if available via an update file.
-
-### Setup
-
-etup is responsible for retrievable a link file that contains internal Amazon links; The application is unable to retrieve this file without a special physical card only given to associates.
