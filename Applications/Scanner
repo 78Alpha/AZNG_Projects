@@ -1,0 +1,67 @@
+import time
+import pyautogui
+import PySimpleGUI as gui
+import sys
+
+version = "0.0.1"
+
+def scanner():
+    with open("pods.txt", 'r') as pods:
+        pod_list = pods.readlines()
+        time.sleep(5)
+        for pod in pod_list:
+            pyautogui.typewrite(f"{pod}\n")
+            time.sleep(1)
+
+
+def single():
+    with open("pods.txt", 'r') as pods:
+        pod_list = pods.readlines()
+        time.sleep(5)
+        for pod in pod_list:
+            pyautogui.typewrite(f"{pod}\n")
+            gui.popup_ok("CLOSE WHEN DONE!")
+
+
+def excel():
+    with open("pods.txt", 'r') as pods:
+        pod_list = pods.readlines()
+        time.sleep(5)
+        for pod in pod_list:
+            pyautogui.typewrite(f"{pod}")
+
+
+def test_window():
+    layout = [
+        [gui.Text(f"Scanner {version}")],
+        [gui.Button("START"), gui.Button("EXCEL"), gui.Button("SINGLE")]
+    ]
+
+    window = gui.Window("test", layout=layout)
+    while True:
+        events, values = window.Read(timeout=100)
+        # print(events, values)
+        if events == "START":
+            gui.popup_ok("5 Seconds")
+            scanner()
+        elif events == "SINGLE":
+            gui.popup_ok("5 Seconds")
+            single()
+        elif events == "EXCEL":
+            gui.popup_ok("5 Seconds")
+            excel()
+        elif events is None and values is None:
+            sys.exit()
+        else:
+            pass
+
+
+test_window()
+
+# while True:
+#     user_input = str(input("START: "))
+#     if user_input in ["YES", "yes", 'y', 'Y']:
+#         scanner()
+#     else:
+#         pass
+
