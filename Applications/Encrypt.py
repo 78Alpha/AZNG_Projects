@@ -55,8 +55,7 @@ def decrypt_file(data, key):
     return dec
 
 
-def get_link():
+def get_link(enc_data):
     key = key_gen_opt()
-    enc_data = b'\xe1\xebs\x90\x0eo\xcdeQ\x1d\x08L<\x7f\x8e\xf2R\x17P\x04W\xf1lS\xb8.\x1d\xac\x92K\x01\x9c\xf4@\xa5E\xd7\x9e\xfaQ\xa9\xcc\xad\x7f\xfb\x8ct\x9b\x920"\x85\x13\x1e\xf4dQm\x8c\x9d\x81\x02)\x03'
     link = decrypt_file(enc_data, key).decode('UTF-8')
     return link
