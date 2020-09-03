@@ -7,47 +7,47 @@ _C_LOGO_ = b'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQA
 _C_AA_LOGO_ = b'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'
 
 
-def output_to_file(filtered_list):
-    with open("output.txt", 'w+') as output_research:
-        for item in filtered_list:
-            output_research.write(f"{item}\n")
-    os.system('start output.txt')
-
-
 def filtration(_V_ASIN_,_C_INPUT_FILE_):
-    master_bins = []
-    for line in _C_INPUT_FILE_:
-        if _V_ASIN_ in line and 'P-' in line:
-            if 'P-' in line.split('	')[0] and len(line.split('	')[0]) == 12:
-                master_bins.append(line.split('	')[0])
-    master_bins = list(dict.fromkeys(master_bins))
-    return master_bins
+
+    master_design = ""
+    for item in _C_INPUT_FILE_:
+        print(item)
+        print(_V_ASIN_ in str(item))
+        if item.startswith("P-") and _V_ASIN_ in str(item):
+            print(f"{item[:12]}\n")
+            master_design += (f"{item[:12]}\n")
+    return master_design
 
 
-def create_research():
-    with open("fcresearch.txt", 'w+') as research_file:
-        research_file.close()
-    os.system('start fcresearch.txt')
-
+def output_window(output_):
+    layout = [
+        [gui.Multiline(output_, enable_events=False, background_color='white', size=(30, 30))],
+        [gui.Button("Button", enable_events=True, button_color=('orange', 'white'), border_width=0, image_data=_C_BUTTON_)]
+    ]
+    win = gui.Window("Results", layout=layout, background_color='white', icon=_C_LOGO_)
+    win.Read()
+    win.Close()
 
 def master_window():
     layout_m = [
         [gui.Image(data=_C_AA_LOGO_, background_color='white')],
-        [gui.Text("ASIN", background_color='white', text_color='orange'), gui.InputText(background_color='white')],
-        [gui.Button("FILTER", image_data=_C_BUTTON_, button_color=('orange', 'white'), border_width=0, key='filter', disabled=True), gui.Button("CREATE", image_data=_C_BUTTON_, button_color=("orange", 'white'), border_width=0), gui.Button("EXIT", image_data=_C_BUTTON_, button_color=("grey", 'white'), border_width=0)]
+        [gui.Multiline("", enable_events=True, background_color='white', size=(50, 5))],
+        [gui.Text("ASIN", background_color='white', text_color='orange'), gui.InputText(background_color='white', enable_events=True)],
+        [gui.Button("FILTER", image_data=_C_BUTTON_, button_color=('orange', 'white'), border_width=0, key='filter', disabled=True, enable_events=True), gui.Button("EXIT", image_data=_C_BUTTON_, button_color=("grey", 'white'), border_width=0)]
     ]
     window_m = gui.Window("BinFilter", layout=layout_m, background_color='white', icon=_C_LOGO_)
     while True:
-        input_, data_ = window_m.Read(timeout=17)
+        input_, data_ = window_m.Read(timeout=300)
         print(input_, data_)
-        if data_[1] is not '':
+        if data_[1] is not '\n' and data_[2] is not '':
             window_m.FindElement('filter').Update(disabled=False)
         else:
             window_m.FindElement('filter').Update(disabled=True)
         if input_ is None and data_ is None:
             break
         elif input_ == "filter":
-            output_to_file(filtration(_V_ASIN_=data_[1], _C_INPUT_FILE_=open('fcresearch.txt', 'r').readlines()))
+            main_data = data_[1].replace('\t', ' ').split('\n')
+            output_window(filtration(_V_ASIN_=data_[2], _C_INPUT_FILE_=main_data))
         elif input_ == "CREATE":
             create_research()
         elif input_ == "EXIT":
