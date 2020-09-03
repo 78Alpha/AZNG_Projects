@@ -47,7 +47,8 @@ def master_design():
                    background_color='white')],
         [gui.InputText(default_text="",
                        text_color="gray",
-                       key='recipe'),
+                       key='recipe',
+                       enable_events=True),
          gui.Button("Get Recipe",
                     image_data=custom_button,
                     button_color=("Orange", "white"),
@@ -69,28 +70,32 @@ def master_design():
                     border_width=0,
                     disabled=False,
                     key="start",
-                    tooltip="Initiate Pod Building"),
+                    tooltip="Initiate Pod Building",
+                    enable_events=True),
          gui.Button("Clear",
                     image_data=custom_button,
                     button_color=("gray", "white"),
                     border_width=0,
                     disabled=False,
                     key="clear",
-                    tooltip="Clear input text box"),
+                    tooltip="Clear input text box",
+                    enable_events=True),
          gui.Button("Mother",
                     image_data=custom_button,
                     button_color=("orange", "white"),
                     border_width=0,
                     disabled=False,
                     key="Mother",
-                    tooltip="Open Pod Manager in default browser"),
+                    tooltip="Open Pod Manager in default browser",
+                    enable_events=True),
          gui.Button("Exit",
                     image_data=custom_button,
                     button_color=("gray", "white"),
                     border_width=0,
                     disabled=False,
                     key="exit",
-                    tooltip="Exit program"),
+                    tooltip="Exit program",
+                    enable_events=True),
          gui.Spin([delay for delay in range(0, 999)],
                   background_color="white",
                   text_color="orange",
@@ -114,7 +119,7 @@ def master_design():
         can_get_recipe = window.find_element("recipe_button")  # call back to Recipe button element for updating
         can_start_process = window.find_element("start")  # call back to Start button element for updating
         mother = window.find_element("Mother")  # call back to the Mother button for updating
-        events, values = window.Read(timeout=16,
+        events, values = window.Read(timeout=500,
                                      timeout_key='timed')  # Read the textbox and button input every frame
         try:  # Attempt to decrypt mother URL, lock under failure
             mother.Update(disabled=True) if "http" not in get_link(enc_data=_C_Mother_) else window.find_element(
@@ -143,6 +148,9 @@ def master_design():
         elif events == "clear":  # Clear button response
             window.find_element('recipe').Update("")  # Clear recipe text bot
             window.find_element('update').update_bar(0, 1)  # Clear progress bar
+            can_start_process.Update(disabled=True)
+            can_get_recipe.Update(disabled=True)
+            window.Refresh()
         elif events == "Mother":  # Mother response
             webbrowser.open(get_link(enc_data=_C_Mother_), 1, True)  # Decrypt and open link if possible
         elif events == "start":  # Start button response
@@ -157,6 +165,7 @@ def master_design():
             window.Refresh()  # Refresh window to reflect these changes immediately
             for i in range(5):  # Blocking countdown
                 window.find_element('update').update_bar((5 - (i + 1)), 5)  # Update main window progress bar
+                print(f"Update bar value: {5-i}")
                 window.Refresh()  # Reflect changes manually
                 time.sleep(1)  # Sleep countdown to per second
             base_list = values['recipe'][48:].replace('*', '-').strip('!').split('>')  # Recipe without header (BINS only)
@@ -192,6 +201,7 @@ def master_design():
             for face, row in new_dict.items():  # Iterate over pod faces
                 for level, bins in reversed(row.items()):  # Iterate over bins on face in build order
                     for pod_bin in bins:  # Output ordered bins into creation tool
+                        print(f"Working Bin: {pod_bin}")
                         pyautogui.typewrite(f"{pod_bin}\n")  # Emulate scanner
                         time.sleep(delay)  # User input delay for display
                         count += 1  # Increment counter
@@ -247,6 +257,7 @@ def recipe_window(recipe, custom_button=custom_button, custom_logo=custom_logo):
     while True:  # Continue to refresh window to keep it alive
         event, values = window.Read(timeout=1000)
         if event == "kill":  # Kill process
+            print("Recipe Window Killed")
             break
     window.Close()  # Kill window
 
@@ -285,6 +296,7 @@ def alert_window(message, custom_button=custom_button, custom_logo=custom_logo):
     while True:  # Keep the window alive and refreshing
         event, values = window.Read(timeout=300)
         if event == "step":  # Kill the process with user input
+            print("Alert Window Killed")
             break
     window.close()  # Clear up window
 
@@ -295,6 +307,7 @@ def micro_recipe(input_):
     :return: Recipe type and recipe version
     """
     recipe = (input_[:19].replace('*', '-')).split(",")  # Only parse through skin related header parts
+    print("Recipe Filter")
     return recipe[1], recipe[2]  # Return the type and version string, ignoring card version
 
 
