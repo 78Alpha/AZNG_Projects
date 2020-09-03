@@ -15,7 +15,7 @@ AZNG/Temp  >> Directory should not have files placed in it in the Repo, but for 
 * AZNG Launcher
 * BinFilter
 * PodBuilder
-* Updater
+* Scanner
 
 ### AZNG Launcher
 
@@ -29,6 +29,6 @@ This application scrapes bin labels from an FC Research session. It must be able
 
 Pod Builder is a standalone application that is meant to work with Pod console in an effort to virtully build pods. It requires a recipe card that is only available on a physically present pod skin. Should the card be missing, this application will prove inneffective.
 
-### Updater
+### Scanner
 
-The application responsible for retrieving application updates and downloading new applications if available via an update file.
+In the event a scanner is not present for input, you can use this app to push mass amounts of input or push input into apps that otherwise do not accept text.
