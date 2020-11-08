@@ -1,0 +1,69 @@
+import PySimpleGUI as gui
+
+def qcFail():
+    layout = [
+        [gui.Text("QC check failed! Rebuild pod or test again...")]
+    ]
+    windowread = gui.Window("Error", layout=layout, keep_on_top=True)
+    windowread.Read()
+
+def mainWindow():
+    podBin = "None"
+    layout = [
+        [gui.Text("Test", key="scanme")],
+        [gui.Multiline("", visible=True, key="textinput", disabled=False, size=(80, 10))],
+        [gui.InputText("", enable_events=False, do_not_clear=False), gui.Text(f"Bin ID", key="binID", size=(12, 1))],
+        [gui.Button("Button", bind_return_key=True, visible=False, key="Press", enable_events=True)]
+    ]
+
+    myWindow = gui.Window("Test", layout=layout)
+    binID = myWindow.find_element("binID")
+    inputLine = myWindow.find_element("textinput")
+    scanme = myWindow.find_element("scanme")
+    while True:
+        events, values = myWindow.Read()
+        print(events, values)
+        if events == "Press":
+            inputLine.Update(disabled=True)
+            binList = values['textinput'].split(" \t")
+            binsLetter = []
+            for letter in binList:
+                try:
+                    temp = int(letter)
+                except:
+                    if len(letter) == 2:
+                        binsLetter.append(letter)
+
+            # binsLetter = [letter for letter in binList if len(letter) == 2]
+            newList = [item for item in binList if item.startswith("P-") and len(item) == len("P-9-D497B113")]
+            try:
+                if newList[0] == newList[1]:
+                    newList.remove(newList[0])
+            except:
+                pass
+            print(newList)
+            print(binsLetter)
+            print(newList.count(binList[0]))
+            # time.sleep(10)
+
+            try:
+                for i in range(len(binsLetter)):
+                    scanme.Update(binsLetter[i])
+                    binID.Update(newList[i])
+                    temp, values = myWindow.Read()
+                    myWindow.Refresh()
+                    if newList[i] == values[0]:
+                        print("PASS")
+                    else:
+                        qcFail()
+                inputLine.Update(disabled=False)
+            except IndexError:
+                print("End of Pod Reached!")
+
+        # binID.Update(random.randint(1, 100))
+
+while True:
+    try:
+        mainWindow()
+    except:
+        pass
