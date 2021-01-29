@@ -2,6 +2,7 @@ import json
 
 # _C_DATA_HEADER_: str = "00,000*00000*000,00,00U,00,0000*00*00T10:00Z,00"
 _C_DATA_HEADER_: str = "00,CUS*TOMRE*CIP,E.,00U,00,0000*00*00T10:00Z,00"
+# _C_HEADER_PART_: str = ",00U,00,0000*00*00T10:00Z,00"
 
 
 def generateBinConf(podID: str, binFaces: list, binLablels: list, binList: list):
@@ -16,9 +17,10 @@ def generateBinConf(podID: str, binFaces: list, binLablels: list, binList: list)
         podConf.close()
 
 
-def createRecipe(podID: str, binFaces: list, binLablels: list, binList: list, header: str = _C_DATA_HEADER_) -> None:
+def createRecipe(podID: str, binFaces: list, binLablels: list, binList: list, header: str = _C_DATA_HEADER_, mode: str = 'FBA') -> None:
     recipe: str = f"{header}"
-    recipe += ''.join([f">{binFaces[count]}{binLablels[count]}{binList[count].replace('-', '*')}" for count in range(len(binLablels))])
+    # print(binList)
+    recipe += ''.join([f">{binFaces[count]}{binLablels[count]}{binList[count].group(0).replace('-', '*')}" for count in range(len(binLablels))]) #if mode == 'PC' else ''.join([f">{binFaces[count]}{binLablels[count]}{binList[count].group(0).replace('-', '*')}" for count in range(len(binLablels))])
     recipe += "!"
     with open(f"{podID}.txt", 'w+') as podRecipe:
         podRecipe.write(recipe)
