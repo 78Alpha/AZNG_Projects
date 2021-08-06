@@ -5,7 +5,7 @@ import sys
 import webbrowser
 from Encrypt import decrypt, decrypt_file, get_link  # Import necessary elements from Encrypt Module
 
-version = "2.0.1"
+version = "2.0.2"
 
 # Custom Button Image
 custom_button: bytes = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXMAAAOkAAADpAGRLZh1AAAC0UlEQVRoge2br24iURSHfyXBgJkaDIhBY4rB0kdAXtk+QeENtk/Q7hO0dVfyCJCgMGAwGEaAwTAGDGbzm5zLDgVaIMB0l/MlhKYJDHO+nHvunzM3OABrrQegBqAKwAdwB8A75DuugBBAH0AAoA2gaYwJ973tvYRYa+8BPIkM5HK56JXJZJDNZq9dwBrz+RyLxQLT6TR6CU0Av40xre8+/6UQay2z4IUiKMD3fRSLxdPfxX/MaDRCEARODsU0jDHBrjveKcRa+0AZ2WzWq1QqUUYox0Mh3W6XGRSKlPe9hVhr65TBbCiXy0in06riBCyXS/R6vShrRMrr52/dEOJkMCt0eDoPFMJs2SZlTYgMU28q4/zEpDzGh6+U+8MVcIpQGecnFucXiX1EKnblqICzZiiXgbFmzGUm+1eIrDNqHKq0gF8OxpoxZ+zFwSpDntxiT7kssbhz4Y0b2Q6ZaSFPjliBv0257RCVkRyFQsFdu0YhVR2qkoW1RBxUKcRXIckjDnwKueOurZIs4uCOQjzdQk8eceClfvjvvDoiIdyFVJLFOaCQVhjufcKonAlx0KKQcDabaZwTRhyEFNKOnf0qCSEO2hTS5Pg1mUzURUIw9lJDmik5cG+pkOSQI90WXbhp7wf/qcX98jDmkgwfcNNeOULs8wBeuSwS8747xo0vDBssLMPhUJVcCMZainnDXXElRLrqnmlMZ13nhzGW7HiOdzSubZ0YY34BeO90OlpPzghjyxgz1hLzFbsa5d4APOgp4umJnQ5SxuPnC3zVSspOiHo+n3fdEf/Ujf802ITNIUpmVK/GmMa2n/hdszU7IZgtPjOlVCqpmAOhiMFg4NYagTTG7eyC3/dxhLp0Rfie50VnwHyPHT0qAos1V92sE+Px2NXiQB5H2OjlPUpITIx7WOdeHtZRdsOHdpgJbWNMc984HSRkiyBPxWzARd5xU1QAfwDvPzbqRGQg7QAAAABJRU5ErkJggg=="
@@ -127,8 +127,8 @@ def master_design() -> None:
         mother: gui.Button = window.find_element("Mother")  # call back to the Mother button for updating
         events, values = window.Read(timeout=500,
                                      timeout_key='timed')  # Read the textbox and button input every frame
-        if events is None:
-            window.Close()
+        if events is gui.WINDOW_CLOSED:
+            # window.Close()
             sys.exit()
         try:  # Attempt to decrypt mother URL, lock under failure
             mother.Update(disabled=True) if "http" not in get_link(enc_data=_C_Mother_) else window.find_element(
@@ -248,11 +248,14 @@ def recipe_window(recipe: tuple) -> None:
                                     )
 
     while True:  # Continue to refresh window to keep it alive
-        event, values = window.Read(timeout=1000)
-        if event == "kill":  # Kill process
+        event, values = window.Read(timeout=300)
+        if event == "kill" or event == gui.WINDOW_CLOSED:  # Kill process
             print("Recipe Window Killed")
             break
-    window.Close()  # Kill window
+    try:
+        window.Close()  # Kill window
+    except gui.WINDOW_CLOSED:
+        pass
 
 
 def alert_window(message: str) -> None:
