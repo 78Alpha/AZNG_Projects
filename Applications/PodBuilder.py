@@ -205,6 +205,7 @@ def master_design(prior_recipe) -> None:
                             can_start_process.Update(disabled=True)
                             can_get_recipe.Update(disabled=True)
                             window.Refresh()
+                            window.close()
                             return values['recipe']
                         pyautogui.typewrite(f"{(pod_bin.upper())[:size_ref]}\n", )  # Emulate scanner
                         time.sleep(delay)  # User input delay for display
