@@ -19,7 +19,7 @@ _C_POD_BUILDER_: bytes = b'iVBORw0KGgoAAAANSUhEUgAAEEcAABBHCAYAAACcmAIaAAAACXBIW
 size_ref: int = len("P-0-A000B000")
 
 
-def master_design() -> None:
+def master_design(prior_recipe) -> None:
     max_value: int = 1  # General default
     count: int = 0  # Count variable used in progress bars
     """
@@ -50,7 +50,7 @@ def master_design() -> None:
     The UI is themed orange and white per normal Amazon external theming.
     """
     ui: list = [
-        [gui.InputText(default_text="",
+        [gui.InputText(default_text=prior_recipe,
                        text_color="gray",
                        key='recipe',
                        enable_events=True,
@@ -77,7 +77,7 @@ def master_design() -> None:
                     key="start",
                     tooltip="Initiate Pod Building",
                     enable_events=True),
-         gui.Button("Clear",
+         gui.Button("Reset",
                     image_data=custom_button,
                     button_color=("gray", "white"),
                     border_width=0,
@@ -170,9 +170,10 @@ def master_design() -> None:
             alert_window("Bring Pod Manager into focus before proceeding!")
             window.find_element('recipe_button').Update(disabled=True)  # Disable recipe button until done
             window.find_element('start').Update(disabled=True)  # Disable start button unitl done
-            window.find_element('clear').Update(disabled=True)  # Disable clear until done
+            # window.find_element('clear').Update(disabled=True)  # Disable clear until done
             window.find_element('Mother').Update(disabled=True)  # Disable Mother until done
             window.Refresh()  # Refresh window to reflect these changes immediately
+
             base_list: list = values['recipe'][48:].replace('*', '-').strip('!').split(
                 '>')  # Recipe without header (BINS only)
             list_len: int = len(base_list)  # Number of bins to iterate over for progress bars
@@ -197,6 +198,14 @@ def master_design() -> None:
                 for level, bins in reversed(row.items()):  # Iterate over bins on face in build order
                     for pod_bin in bins:  # Output ordered bins into creation tool
                         print(f"Working Bin: {(pod_bin.upper())[:size_ref]}")
+                        temp_events, temp_values = window.Read(timeout=0)
+                        if temp_events == "clear":
+                            # window.find_element('recipe').Update("")  # Clear recipe text bot
+                            window.find_element('update').update_bar(0, 1)  # Clear progress bar
+                            can_start_process.Update(disabled=True)
+                            can_get_recipe.Update(disabled=True)
+                            window.Refresh()
+                            return values['recipe']
                         pyautogui.typewrite(f"{(pod_bin.upper())[:size_ref]}\n", )  # Emulate scanner
                         time.sleep(delay)  # User input delay for display
                         count += 1  # Increment counter
@@ -302,4 +311,6 @@ def micro_recipe(input_: str) -> tuple:
     return recipe[1], recipe[2]  # Return the type and version string, ignoring card version
 
 
-master_design()
+prior_recipe = ''
+while True:
+    prior_recipe = master_design(prior_recipe)
