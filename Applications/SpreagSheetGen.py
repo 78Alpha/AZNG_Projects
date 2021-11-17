@@ -1,6 +1,7 @@
 import PySimpleGUI as gui
 import os
 import sys
+import time
 
 _C_VERSION = '1.0.0'
 
@@ -10,7 +11,7 @@ _V_INIT_2_ = [0, 1]
 _V_INIT_3_ = [0, 1]
 _V_INIT_4_ = [0, 1]
 
-
+_V_SLEEP_TIMER_ = 0.2
 
 def list_set_1_add():
     global _V_INIT_1_
@@ -196,6 +197,7 @@ def main():
                 main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
             main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_1_down":
             try:
                 if len(_V_INIT_1_) > 2:
@@ -207,10 +209,12 @@ def main():
                 main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
             main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         if events == "input_2_up":
             _V_INIT_2_.append(_V_INIT_2_[-1] + 1)
             main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_2_down":
             try:
                 if len(_V_INIT_2_) > 2:
@@ -222,6 +226,7 @@ def main():
                 main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
             main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         if events == "return_letter_2":
             if _C_ALPHABET_.index(values["return_letter_2"]) >= _C_ALPHABET_.index(values["return_letter_3"]):
                 try:
@@ -241,6 +246,7 @@ def main():
                 main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
             main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_3_down":
             try:
                 if len(_V_INIT_3_) > 2:
@@ -252,10 +258,12 @@ def main():
                 main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
             main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         if events == "input_4_up":
             _V_INIT_4_.append(_V_INIT_4_[-1] + 1)
             main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_4_down":
             try:
                 if len(_V_INIT_4_) > 2:
@@ -267,6 +275,7 @@ def main():
                 main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
             main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
             main_window.Refresh()
+            time.sleep(_V_SLEEP_TIMER_)
         if events == "save_as":
             save_file = values["save_as"]
             bin_array = generate_bins(values, _C_ALPHABET_)
