@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-_C_VERSION = '1.0.1'
+_C_VERSION = '1.0.2'
 
 _C_ALPHABET_ = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 _V_INIT_1_ = [0, 1]
@@ -12,6 +12,28 @@ _V_INIT_3_ = [0, 1]
 _V_INIT_4_ = [0, 1]
 
 _V_SLEEP_TIMER_ = 0.2
+
+
+def quad_check(value_1, value_2, value_3, value_4):
+    value_1 = int(value_1)
+    value_2 = int(value_2)
+    value_3 = int(value_3)
+    value_4 = int(value_4)
+    if value_2 < value_1:
+        global _V_INIT_1_
+        global _V_INIT_2_
+        for i in range(value_2):
+            _V_INIT_2_ = []
+            _V_INIT_2_.append(i)
+        _V_INIT_1_ = _V_INIT_2_
+    if value_4 < value_3:
+        global _V_INIT_3_
+        global _V_INIT_4_
+        for i in range(value_4):
+            _V_INIT_4_ = []
+            _V_INIT_4_.append(i)
+        _V_INIT_3_ = _V_INIT_4_
+
 
 def list_set_1_add():
     global _V_INIT_1_
@@ -277,6 +299,14 @@ def main():
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         if events == "save_as":
+            quad_check(values['number_input_1'], values['number_input_2'], values['number_input_3'], values['number_input_4'])
+            main_window.find_element('number_input_1').Update(int(values['number_input_1']))
+            main_window.find_element('number_input_2').Update(int(values['number_input_1']))
+            main_window.find_element('number_input_3').Update(int(values['number_input_3']))
+            main_window.find_element('number_input_4').Update(int(values['number_input_3']))
+            main_window.Refresh()
+            values['number_input_2'] = values['number_input_1']
+            values['number_input_4'] = values['number_input_3']
             save_file = values["save_as"]
             bin_array = generate_bins(values, _C_ALPHABET_)
             generate_csv(bin_array=bin_array, file_name=save_file)
