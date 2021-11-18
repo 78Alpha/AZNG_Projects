@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-_C_VERSION = '1.0.2'
+_C_VERSION = '1.0.1'
 
 _C_ALPHABET_ = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 _V_INIT_1_ = [0, 1]
