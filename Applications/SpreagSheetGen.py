@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-_C_VERSION = '1.0.1'
+_C_VERSION = '1.0.3'
 
 _C_ALPHABET_ = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 _V_INIT_1_ = [0, 1]
@@ -110,7 +110,7 @@ def main():
     global _V_INIT_4_
 
     Spinner_1 = [
-        gui.Input('0', size=(5, 1), justification='r', key='number_input_1', enable_events=True, background_color='white', text_color='orange'),
+        gui.Input('0', size=(5, 1), justification='r', key='number_input_1', readonly=True, enable_events=True, background_color='white', text_color='orange'),
         gui.RealtimeButton('▲', size=(1, 1), border_width=0,
                            button_color=(gui.theme_text_color('orange'), gui.theme_background_color('white')), key='input_1_up'),
         gui.RealtimeButton('▼', size=(1, 1), border_width=0,
@@ -119,7 +119,7 @@ def main():
     ]
 
     Spinner_2 = [
-        gui.Input('0', size=(5, 1), justification='r', key='number_input_2', enable_events=True, text_color='orange', background_color='white'),
+        gui.Input('0', size=(5, 1), justification='r', key='number_input_2', readonly=True, enable_events=True, text_color='orange', background_color='white'),
         gui.RealtimeButton('▲', size=(1, 1), border_width=0,
                            button_color=(gui.theme_text_color(), gui.theme_background_color()), key='input_2_up'),
         gui.RealtimeButton('▼', size=(1, 1), border_width=0,
@@ -128,7 +128,7 @@ def main():
     ]
 
     Spinner_3 = [
-        gui.Input('0', size=(5, 1), justification='r', key='number_input_3', enable_events=True, text_color='orange', background_color='white'),
+        gui.Input('0', size=(5, 1), justification='r', key='number_input_3', readonly=True, enable_events=True, text_color='orange', background_color='white'),
         gui.RealtimeButton('▲', size=(1, 1), border_width=0,
                            button_color=(gui.theme_text_color(), gui.theme_background_color()), key='input_3_up'),
         gui.RealtimeButton('▼', size=(1, 1), border_width=0,
@@ -137,7 +137,7 @@ def main():
     ]
 
     Spinner_4 = [
-        gui.Input('0', size=(5, 1), justification='r', key='number_input_4', enable_events=True, text_color='orange', background_color='white'),
+        gui.Input('0', size=(5, 1), justification='r', key='number_input_4', readonly=True, enable_events=True, text_color='orange', background_color='white'),
         gui.RealtimeButton('▲', size=(1, 1), border_width=0,
                            button_color=(gui.theme_text_color(), gui.theme_background_color()), key='input_4_up'),
         gui.RealtimeButton('▼', size=(1, 1), border_width=0,
@@ -305,8 +305,10 @@ def main():
             main_window.find_element('number_input_3').Update(int(values['number_input_3']))
             main_window.find_element('number_input_4').Update(int(values['number_input_3']))
             main_window.Refresh()
-            values['number_input_2'] = values['number_input_1']
-            values['number_input_4'] = values['number_input_3']
+            if values['number_input_1'] < values['number_input_2']:
+                values['number_input_2'] = values['number_input_1']
+            if values['number_input_4'] < values['number_input_3']:
+                values['number_input_4'] = values['number_input_3']
             save_file = values["save_as"]
             bin_array = generate_bins(values, _C_ALPHABET_)
             generate_csv(bin_array=bin_array, file_name=save_file)
