@@ -65,6 +65,19 @@ def generate_csv(bin_array: list, file_name: str) -> None:
 
 
 def generate_bins(data: dict, alphabet: list) -> list:
+    """
+    ||| Creation |||
+
+    Takes the input that the user provided and returns a list of formatted string elements. The elements should return
+    as A01-A-01 format for maximum compatibility. The alphabet is split to allow outputs to be within a selected range
+    rather than all before and/or after a set character. This ruling also applies to numbers so that the start can be
+    a non zero number. This allows flexibility but not inverted outputs.
+
+    :param data: Data is returned as a dictionary from the gui and holds all info provided by the user
+    :param alphabet: A list version of the alphabet used as a base for the iterated alphabet used in filtering, in scope
+     placeholder
+    :return: Returns a list of strings formatted to A01-A-01 format
+    """
     letter_index: list = alphabet[alphabet.index(data["return_letter_2"]):alphabet.index(data["return_letter_3"]) + 1]
     _V_BIN_ARRAY_: list = []
     for cycle_1 in range(int(data['number_input_1']), int(data['number_input_2']) + 1):
@@ -76,11 +89,25 @@ def generate_bins(data: dict, alphabet: list) -> list:
 
 
 def main():
+    """
+    Globalizes the INIT variables, allows for mutability from all locations to allow for interop between all functions
+    without having to point to the data and point back to save state. Must be careful with changing the values as they
+    will mess with all other functions.
+    """
     global _V_INIT_1_
     global _V_INIT_2_
     global _V_INIT_3_
     global _V_INIT_4_
 
+
+    """
+    Spinner object is a customized version of the spinner that does not rely on lists to show number values. This
+    approach frees memory but cause partial misalignment with other gui elements. It is comprised of a read only text
+    box to display numbers and to realtime buttons for fast and continuous input. Text input was disabled due to
+    conflicts with windows refreshing. Each button has a key that can be referenced from the main window and used to
+    force checks on values that may cause potential errors or reverse intent. This doc statement applies to all
+    Spinner items.
+    """
     Spinner_1 = [
         gui.Input('0', size=(5, 1), justification='r', key='number_input_1', readonly=True, enable_events=True, background_color='white', text_color='orange'),
         gui.RealtimeButton('▲', size=(1, 1), border_width=0,
@@ -117,6 +144,20 @@ def main():
                            key='input_4_down')
     ]
 
+    """
+    Column elements are used to align the gui interface to calm the chaos that would result otherwise. The eye should
+    follow the visual elements in a slight rolling motion to improve interest in each element but not have a harsh
+    method of display that would cause confusion of element purpose. This doc is to reflect on the purpose of the
+    columns but not what each on is being used for.
+    """
+
+
+    """
+    Column 1 is a letter selection dropdown menu. This is used to determine the single start character of the formatted
+    strings. The only active elements is the dropdown menu, with text on top used to show an example letter and the
+    ending text is used solely as vertical buffer.
+    """
+
     column_1 = [
         [gui.Text(_C_ALPHABET_[0], size=(2, 1), key="display_letter_1", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         [gui.DropDown(_C_ALPHABET_, default_value=_C_ALPHABET_[0], size=(2, 1), key="return_letter_1",
@@ -124,17 +165,35 @@ def main():
         [gui.Text(background_color='white')]
     ]
 
+    """
+    Column 2 uses the Spinner_1 and the Spinner_2 custom elements to determine the ranges of numbers in bins. The text
+    example for this range is in a buffered integer-string format, such that all numbers will be 01-09 if less than 10
+    or their number, should they be greater.
+    """
+
     column_2 = [
         [gui.Text(f"{_V_INIT_2_:02d}", size=(5, 1), key="display_number_1", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         Spinner_1,
         Spinner_2,
     ]
 
+    """
+    A dash elements with vertical text buffers to allow a smooth and matching theme
+    """
+
     column_3 = [
         [gui.Text("-", size=(1, 1), background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         [gui.Text(background_color='white')],
         [gui.Text(background_color='white')]
     ]
+
+    """
+    Column_4 is a letter range selection. It used 2 dropdown menus that select a target and run checks to ensure a
+    letter selected for the start does not exceed a letter in the end, this disallows reverse letter lists. This element
+    used the legacy lists method but should be kept this way to allow for slicing. The text field is to give an example
+    of a letter. The elements have keys that are read from directly but should not be altered aside from comparison and
+    corrections.
+    """
 
     column_4 = [
         [gui.Text(_C_ALPHABET_[0], size=(2, 1), key="display_letter_2", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
@@ -144,11 +203,22 @@ def main():
                       enable_events=True, readonly=True, background_color='white', text_color='orange')],
     ]
 
+    """
+    A buffered dash that allows the gui to appear more fluidly
+    """
+    
     column_5 = [
         [gui.Text("-", size=(1, 1), background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         [gui.Text(background_color='white')],
         [gui.Text(background_color='white')]
     ]
+
+    """
+    Used the remaining spinner elements to determing the trailing range of numbers for formatting. It also uses the
+    buffered integer-string format 01-09 if the integer is less than 10 or the number itself if greater. They will
+    not allow the second number to be smaller than the initial range. As with the earlier, there are checks in place
+    to prohibit reverse ranges.
+    """
 
     column_6 = [
         [gui.Text(f"{_V_INIT_4_:02d}", size=(5, 1), key="display_number_2", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
