@@ -3,98 +3,70 @@ import os
 import sys
 import time
 
-_C_VERSION = '1.0.3'
+_C_VERSION: str = '1.0.4'
 
-_C_ALPHABET_ = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-_V_INIT_1_ = [0, 1]
-_V_INIT_2_ = [0, 1]
-_V_INIT_3_ = [0, 1]
-_V_INIT_4_ = [0, 1]
+_C_ALPHABET_: list = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")  # Alphabbet into list
 
-_V_SLEEP_TIMER_ = 0.2
+_V_INIT_1_: int = 0  # Initial value for Spinner_1
+_V_INIT_2_: int = 0  # Initial value for Spinner_2
+_V_INIT_3_: int = 0  # Initial value for Spinner_3
+_V_INIT_4_: int = 0  # Initial value for Spinner_4
+
+_V_SLEEP_TIMER_: float = 0.2  # Delay between ticks of spinner objects, use feedback to determine good limit
 
 
-def quad_check(value_1, value_2, value_3, value_4):
-    value_1 = int(value_1)
-    value_2 = int(value_2)
-    value_3 = int(value_3)
-    value_4 = int(value_4)
-    if value_2 < value_1:
+def quad_check(value_1: int, value_2: int, value_3: int, value_4: int) -> None:
+    """
+    ||| Comparison |||
+
+    This function is used to compare values returned from the gui and ensure they are in a usable integer format.
+    Negative numbers would crash the range or produce a range on non-functional value.
+    This will also check to make sure that the first counter in the range is not larger than the second counter as this
+    would produce an inverted range, and that may not be the goal, and is currently out of scope for this script.
+
+    :param value_1: Returned from gui as number value from spinner 1, used to determine range of bins
+    :param value_2: Returned from gui as number value from spinner 1, used to determine range of bins
+    :param value_3: Returned from gui as number value from spinner 1, used to determine range of bins
+    :param value_4: Returned from gui as number value from spinner 1, used to determine range of bins
+    :return: No value should be returned due to use of global variables
+    """
+
+    value_1 = 0 if value_1 <= 0 else value_1  # force value to 0 if it would be negative
+    value_2 = 0 if value_2 <= 0 else value_2  # force value to 0 if it would be negative
+    value_3 = 0 if value_3 <= 0 else value_3  # force value to 0 if it would be negative
+    value_4 = 0 if value_4 <= 0 else value_4  # force value to 0 if it would be negative
+
+    if value_2 < value_1:  # check if end of loop would be smaller than beginning and force them to be equal
         global _V_INIT_1_
         global _V_INIT_2_
-        for i in range(value_2):
-            _V_INIT_2_ = []
-            _V_INIT_2_.append(i)
+        _V_INIT_2_ = value_1
         _V_INIT_1_ = _V_INIT_2_
-    if value_4 < value_3:
+    if value_4 < value_3:  # check if end of loop would be smaller than beginning and force them to be equal
         global _V_INIT_3_
         global _V_INIT_4_
-        for i in range(value_4):
-            _V_INIT_4_ = []
-            _V_INIT_4_.append(i)
+        _V_INIT_4_ = value_3
         _V_INIT_3_ = _V_INIT_4_
 
 
-def list_set_1_add():
-    global _V_INIT_1_
-    global _V_INIT_2_
-    _V_INIT_1_.append(_V_INIT_1_[-1] + 1)
-    _V_INIT_2_.append(_V_INIT_2_[-1] + 1)
+def generate_csv(bin_array: list, file_name: str) -> None:
+    """
+    ||| Creation |||
 
-
-def list_set_2_add():
-    global _V_INIT_3_
-    global _V_INIT_4_
-    _V_INIT_3_.append(_V_INIT_3_[-1] + 1)
-    _V_INIT_4_.append(_V_INIT_4_[-1] + 1)
-
-
-def list_set_1_remove():
-    global _V_INIT_1_
-    global _V_INIT_2_
-    _V_INIT_1_.pop(-1)
-    _V_INIT_2_.pop(-1)
-
-
-def list_set_2_remove():
-    global _V_INIT_3_
-    global _V_INIT_4_
-    _V_INIT_3_.pop(-1)
-    _V_INIT_4_.pop(-1)
-
-
-def list_set_1_gen(data_range):
-    global _V_INIT_1_
-    global _V_INIT_2_
-    _V_INIT_1_ = []
-    _V_INIT_2_ = []
-    for i in range(int(data_range)):
-        _V_INIT_1_.append(i)
-        _V_INIT_2_.append(i)
-    # _V_INIT_2_.append(int(_V_INIT_1_[-1])+1)
-
-
-def list_set_2_gen(data_range):
-    global _V_INIT_3_
-    global _V_INIT_4_
-    _V_INIT_3_ = []
-    _V_INIT_4_ = []
-    for i in range(int(data_range)):
-        _V_INIT_3_.append(i)
-        _V_INIT_4_.append(i)
-    # _V_INIT_4_.append(int(_V_INIT_3_[-1])+1)
-
-
-def generate_csv(bin_array, file_name):
+    This function is meant to generate a csv file of the user's choice and write the created bins to the file for use
+    in xml files and inventory.
+    
+    :param bin_array: A list of formatted bins to be put into a csv for later use in advanced xml files
+    :param file_name: The saved directory for the file to be generated, this is input by the user from the gui
+    :return: Nothing should be returned from this function
+    """
     with open(file_name, 'w+') as csv_file:
         for formatted_bin in bin_array:
             csv_file.write(f"{formatted_bin}\n")
-    pass
 
 
-def generate_bins(data, alphabet):
-    letter_index = alphabet[alphabet.index(data["return_letter_2"]):alphabet.index(data["return_letter_3"]) + 1]
-    _V_BIN_ARRAY_ = []
+def generate_bins(data: dict, alphabet: list) -> list:
+    letter_index: list = alphabet[alphabet.index(data["return_letter_2"]):alphabet.index(data["return_letter_3"]) + 1]
+    _V_BIN_ARRAY_: list = []
     for cycle_1 in range(int(data['number_input_1']), int(data['number_input_2']) + 1):
         for letter in letter_index:
             for cycle_2 in range(int(data['number_input_3']), int(data['number_input_4']) + 1):
@@ -153,7 +125,7 @@ def main():
     ]
 
     column_2 = [
-        [gui.Text(f"{_V_INIT_2_[-1]:02d}", size=(5, 1), key="display_number_1", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
+        [gui.Text(f"{_V_INIT_2_:02d}", size=(5, 1), key="display_number_1", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         Spinner_1,
         Spinner_2,
     ]
@@ -179,7 +151,7 @@ def main():
     ]
 
     column_6 = [
-        [gui.Text(f"{_V_INIT_2_[-1]:02d}", size=(5, 1), key="display_number_2", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
+        [gui.Text(f"{_V_INIT_4_:02d}", size=(5, 1), key="display_number_2", background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         Spinner_3,
         Spinner_4,
     ]
@@ -213,40 +185,36 @@ def main():
             main_window.close()
             sys.exit()
         if events == "input_1_up":
-            _V_INIT_1_.append(_V_INIT_1_[-1] + 1)
-            if _V_INIT_1_[-1] >= _V_INIT_2_[-1]:
-                _V_INIT_2_ = _V_INIT_1_ + [_V_INIT_1_[-1] + 1]
-                main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
-            main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
+            _V_INIT_1_ += 1
+            if _V_INIT_1_ >= _V_INIT_2_:
+                _V_INIT_2_ = _V_INIT_1_
+                main_window.find_element("number_input_2").update(_V_INIT_2_)
+            main_window.find_element("number_input_1").update(_V_INIT_1_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_1_down":
-            try:
-                if len(_V_INIT_1_) > 2:
-                    del _V_INIT_1_[-1]
-            except IndexError:
-                _V_INIT_1_ = [0, 1]
-            if _V_INIT_1_[-1] >= _V_INIT_2_[-1]:
-                _V_INIT_2_ = _V_INIT_1_ + [_V_INIT_1_[-1] + 1]
-                main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
-            main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
+            _V_INIT_1_ -= 1
+            if _V_INIT_1_ <= 0:
+                _V_INIT_1_ = 0
+            if _V_INIT_1_ >= _V_INIT_2_:
+                _V_INIT_2_ = _V_INIT_1_
+                main_window.find_element("number_input_2").update(_V_INIT_2_)
+            main_window.find_element("number_input_1").update(_V_INIT_1_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         if events == "input_2_up":
-            _V_INIT_2_.append(_V_INIT_2_[-1] + 1)
-            main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
+            _V_INIT_2_ += 1
+            main_window.find_element("number_input_2").update(_V_INIT_2_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_2_down":
-            try:
-                if len(_V_INIT_2_) > 2:
-                    del _V_INIT_2_[-1]
-            except IndexError:
-                _V_INIT_2_ = [0, 1]
-            if _V_INIT_1_[-1] == _V_INIT_2_[-1]:
-                del _V_INIT_1_[-1]
-                main_window.find_element("number_input_1").update(_V_INIT_1_[-1])
-            main_window.find_element("number_input_2").update(_V_INIT_2_[-1])
+            _V_INIT_2_ -= 1
+            if _V_INIT_2_ <= 0:
+                _V_INIT_2_ = 0
+            if _V_INIT_2_ < _V_INIT_1_:
+                _V_INIT_1_ = _V_INIT_2_
+                main_window.find_element('number_input_1').update(_V_INIT_1_)
+            main_window.find_element("number_input_2").update(_V_INIT_2_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         if events == "return_letter_2":
@@ -262,40 +230,36 @@ def main():
                 except IndexError:
                     main_window.find_element("return_letter_2").update(_C_ALPHABET_[0])
         if events == "input_3_up":
-            _V_INIT_3_.append(_V_INIT_3_[-1] + 1)
-            if _V_INIT_3_[-1] >= _V_INIT_4_[-1]:
-                _V_INIT_4_ = _V_INIT_3_ + [_V_INIT_3_[-1] + 1]
-                main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
-            main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
+            _V_INIT_3_ += 1
+            if _V_INIT_3_ >= _V_INIT_4_:
+                _V_INIT_4_ = _V_INIT_3_
+                main_window.find_element("number_input_4").update(_V_INIT_4_)
+            main_window.find_element("number_input_3").update(_V_INIT_3_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_3_down":
-            try:
-                if len(_V_INIT_3_) > 2:
-                    del _V_INIT_3_[-1]
-            except IndexError:
-                _V_INIT_3_ = [0, 1]
-            if _V_INIT_3_[-1] >= _V_INIT_4_[-1]:
-                _V_INIT_4_ = _V_INIT_3_ + [_V_INIT_3_[-1] + 1]
-                main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
-            main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
+            _V_INIT_3_ -= 1
+            if _V_INIT_3_ <= 0:
+                _V_INIT_3_ = 0
+            if _V_INIT_3_ >= _V_INIT_4_:
+                _V_INIT_4_ = _V_INIT_3_
+                main_window.find_element("number_input_4").update(_V_INIT_4_)
+            main_window.find_element("number_input_3").update(_V_INIT_3_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         if events == "input_4_up":
-            _V_INIT_4_.append(_V_INIT_4_[-1] + 1)
-            main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
+            _V_INIT_4_ += 1
+            main_window.find_element("number_input_4").update(_V_INIT_4_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         elif events == "input_4_down":
-            try:
-                if len(_V_INIT_4_) > 2:
-                    del _V_INIT_4_[-1]
-            except IndexError:
-                _V_INIT_4_ = [0, 1]
-            if _V_INIT_3_[-1] == _V_INIT_4_[-1]:
-                del _V_INIT_3_[-1]
-                main_window.find_element("number_input_3").update(_V_INIT_3_[-1])
-            main_window.find_element("number_input_4").update(_V_INIT_4_[-1])
+            _V_INIT_4_ -= 1
+            if _V_INIT_4_ <= 0:
+                _V_INIT_4_ = 0
+            if _V_INIT_4_ < _V_INIT_3_:
+                _V_INIT_3_ = _V_INIT_4_
+                main_window.find_element('number_input_3').update(_V_INIT_3_)
+            main_window.find_element("number_input_4").update(_V_INIT_4_)
             main_window.Refresh()
             time.sleep(_V_SLEEP_TIMER_)
         if events == "save_as":
@@ -305,10 +269,6 @@ def main():
             main_window.find_element('number_input_3').Update(int(values['number_input_3']))
             main_window.find_element('number_input_4').Update(int(values['number_input_3']))
             main_window.Refresh()
-            if values['number_input_1'] < values['number_input_2']:
-                values['number_input_2'] = values['number_input_1']
-            if values['number_input_4'] < values['number_input_3']:
-                values['number_input_4'] = values['number_input_3']
             save_file = values["save_as"]
             bin_array = generate_bins(values, _C_ALPHABET_)
             generate_csv(bin_array=bin_array, file_name=save_file)
