@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-_C_VERSION: str = '1.0.4'
+_C_VERSION: str = '1.0.5'
 
 _C_ALPHABET_: list = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")  # Alphabbet into list
 
@@ -31,10 +31,10 @@ def quad_check(value_1: int, value_2: int, value_3: int, value_4: int) -> None:
     :return: No value should be returned due to use of global variables
     """
 
-    value_1 = 0 if value_1 <= 0 else value_1  # force value to 0 if it would be negative
-    value_2 = 0 if value_2 <= 0 else value_2  # force value to 0 if it would be negative
-    value_3 = 0 if value_3 <= 0 else value_3  # force value to 0 if it would be negative
-    value_4 = 0 if value_4 <= 0 else value_4  # force value to 0 if it would be negative
+    value_1 = 0 if int(value_1) <= 0 else int(value_1)  # force value to 0 if it would be negative
+    value_2 = 0 if int(value_2) <= 0 else int(value_2)  # force value to 0 if it would be negative
+    value_3 = 0 if int(value_3) <= 0 else int(value_3)  # force value to 0 if it would be negative
+    value_4 = 0 if int(value_4) <= 0 else int(value_4)  # force value to 0 if it would be negative
 
     if value_2 < value_1:  # check if end of loop would be smaller than beginning and force them to be equal
         global _V_INIT_1_
@@ -54,7 +54,7 @@ def generate_csv(bin_array: list, file_name: str) -> None:
 
     This function is meant to generate a csv file of the user's choice and write the created bins to the file for use
     in xml files and inventory.
-    
+
     :param bin_array: A list of formatted bins to be put into a csv for later use in advanced xml files
     :param file_name: The saved directory for the file to be generated, this is input by the user from the gui
     :return: Nothing should be returned from this function
@@ -265,9 +265,9 @@ def main():
         if events == "save_as":
             quad_check(values['number_input_1'], values['number_input_2'], values['number_input_3'], values['number_input_4'])
             main_window.find_element('number_input_1').Update(int(values['number_input_1']))
-            main_window.find_element('number_input_2').Update(int(values['number_input_1']))
+            main_window.find_element('number_input_2').Update(int(values['number_input_2']))
             main_window.find_element('number_input_3').Update(int(values['number_input_3']))
-            main_window.find_element('number_input_4').Update(int(values['number_input_3']))
+            main_window.find_element('number_input_4').Update(int(values['number_input_4']))
             main_window.Refresh()
             save_file = values["save_as"]
             bin_array = generate_bins(values, _C_ALPHABET_)
