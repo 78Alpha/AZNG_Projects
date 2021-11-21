@@ -296,49 +296,52 @@ def main():
                     main_window.find_element("return_letter_2").update(_C_ALPHABET_[_C_ALPHABET_.index(values["return_letter_3"]) - 1])
                 except IndexError:  # make start range "A" if failed
                     main_window.find_element("return_letter_2").update(_C_ALPHABET_[0])
-        if events == "input_3_up":
-            _V_INIT_3_ += 1
-            if _V_INIT_3_ >= _V_INIT_4_:
-                _V_INIT_4_ = _V_INIT_3_
-                main_window.find_element("number_input_4").update(_V_INIT_4_)
-            main_window.find_element("number_input_3").update(_V_INIT_3_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        elif events == "input_3_down":
-            _V_INIT_3_ -= 1
-            if _V_INIT_3_ <= 0:
-                _V_INIT_3_ = 0
-            if _V_INIT_3_ >= _V_INIT_4_:
-                _V_INIT_4_ = _V_INIT_3_
-                main_window.find_element("number_input_4").update(_V_INIT_4_)
-            main_window.find_element("number_input_3").update(_V_INIT_3_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        if events == "input_4_up":
-            _V_INIT_4_ += 1
-            main_window.find_element("number_input_4").update(_V_INIT_4_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        elif events == "input_4_down":
-            _V_INIT_4_ -= 1
-            if _V_INIT_4_ <= 0:
-                _V_INIT_4_ = 0
-            if _V_INIT_4_ < _V_INIT_3_:
-                _V_INIT_3_ = _V_INIT_4_
-                main_window.find_element('number_input_3').update(_V_INIT_3_)
-            main_window.find_element("number_input_4").update(_V_INIT_4_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        if events == "save_as":
+        if events == "input_3_up":  # Spinner_3 button up pressed
+            _V_INIT_3_ += 1  # add 1
+            if _V_INIT_3_ >= _V_INIT_4_:  # if start range greater than end range
+                _V_INIT_4_ = _V_INIT_3_  # make them equal
+                main_window.find_element("number_input_4").update(_V_INIT_4_)  # update value of end range
+            main_window.find_element("number_input_3").update(_V_INIT_3_)  # update value of start range
+            main_window.Refresh()  # show new values in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait for hard coded timer between realtime button inputs
+        elif events == "input_3_down":  # Spinner_3 button down pressed
+            _V_INIT_3_ -= 1  # subtract 1
+            if _V_INIT_3_ <= 0:  # if value is negative
+                _V_INIT_3_ = 0  # make it 0
+            if _V_INIT_3_ >= _V_INIT_4_:  # if start range is greater than or equal to end range
+                _V_INIT_4_ = _V_INIT_3_  # make them equal
+                main_window.find_element("number_input_4").update(_V_INIT_4_)  # update end range value
+            main_window.find_element("number_input_3").update(_V_INIT_3_)  # update start range value
+            main_window.Refresh()  # show new values in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded sleep time between button inputs
+        if events == "input_4_up":  # Spinner_4 up button pressed
+            _V_INIT_4_ += 1  # add 1
+            main_window.find_element("number_input_4").update(_V_INIT_4_)  # update value
+            main_window.Refresh()  # show new value in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded sleep timer between realtime button presses
+        elif events == "input_4_down":  # Spinner_4 down button pressed
+            _V_INIT_4_ -= 1  # subtract 1
+            if _V_INIT_4_ <= 0:  # if negative
+                _V_INIT_4_ = 0  # make 0
+            if _V_INIT_4_ < _V_INIT_3_:  # if end range is less than start range
+                _V_INIT_3_ = _V_INIT_4_  # make equal
+                main_window.find_element('number_input_3').update(_V_INIT_3_)  # update start range value
+            main_window.find_element("number_input_4").update(_V_INIT_4_)  # update end range value
+            main_window.Refresh()  # show new values in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded timer in between realtime button pressed
+        if events == "save_as":  # on save_as button pressed
             quad_check(values['number_input_1'], values['number_input_2'], values['number_input_3'], values['number_input_4'])
+            """
+            Update all text box number values at one time
+            """
             main_window.find_element('number_input_1').Update(int(values['number_input_1']))
             main_window.find_element('number_input_2').Update(int(values['number_input_2']))
             main_window.find_element('number_input_3').Update(int(values['number_input_3']))
             main_window.find_element('number_input_4').Update(int(values['number_input_4']))
-            main_window.Refresh()
-            save_file = values["save_as"]
-            bin_array = generate_bins(values, _C_ALPHABET_)
-            generate_csv(bin_array=bin_array, file_name=save_file)
+            main_window.Refresh()  # show new values after corrections
+            save_file = values["save_as"]  # get the file to be saved as
+            bin_array = generate_bins(values, _C_ALPHABET_)  # get the bins that are formatted
+            generate_csv(bin_array=bin_array, file_name=save_file)  # use the formatted bins and file name to save the target file
         print(events, values)
     pass
 
