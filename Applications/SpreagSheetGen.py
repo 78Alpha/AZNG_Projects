@@ -206,7 +206,7 @@ def main():
     """
     A buffered dash that allows the gui to appear more fluidly
     """
-    
+
     column_5 = [
         [gui.Text("-", size=(1, 1), background_color='white', text_color='green', font=('Helvetica', 12, 'bold'))],
         [gui.Text(background_color='white')],
@@ -226,6 +226,12 @@ def main():
         Spinner_4,
     ]
 
+    """
+    The main gui layout, this shows the version, an example of what the layout should look like once generated, all the
+    column elements, and a save as button. The save as button returns a file name and the path to the file. This allows
+    for multiple files to be saved, a better solution than writing to the same file that will have permission errors.
+    """
+
     main_layout = [
         [gui.Text(f"SpreadSheetGen V.{_C_VERSION}", text_color='orange', font=('Helvetica', 20, 'bold'), background_color='white')],
         [gui.Text("EXAMPLE:", text_color='green', background_color='white', font=('Helvetica', 12, 'bold')), gui.Text("A01-A-01", key="example", background_color='white', text_color='orange', font=('Helvetica', 12, 'bold'))],
@@ -238,66 +244,57 @@ def main():
         [gui.SaveAs("Export", button_color=('orange', 'white'), file_types=(("CSV", "*.csv"), ("All Files", "*.*")), key="save_as", enable_events=True)],
     ]
 
-    _C_SPIN_KEYS_1_UP_ = ["input_1_up", "input_2_up"]
-    _C_SPIN_KEYS_2_UP_ = ["input_3_up", "input_4_up"]
-    _C_SPIN_KEYS_1_DOWN_ = ["input_1_down", "input_2_down"]
-    _C_SPIN_KEYS_2_DOWN_ = ["input_3_down", "input_4_down"]
-    _C_SPIN_SHOW_1_ = ["number_input_1", "number_input_2"]
-    _C_SPIN_SHOW_2_ = ["number_input_3", "number_input_4"]
-    _C_V_INIT_1_ = [_V_INIT_1_, _V_INIT_2_]
-    _C_V_INIT_2_ = [_V_INIT_3_, _V_INIT_4_]
-
     main_window = gui.Window("SpreadSheetGen", main_layout, background_color='white', titlebar_background_color='white',)
 
     while True:
-        events, values = main_window.Read()
-        if events is None:
+        events, values = main_window.Read()  # read the events (button presses) and values (values returned by elements)
+        if events is None:  # If gui window closed but functions left running, close the gui and force terminate
             main_window.close()
             sys.exit()
-        if events == "input_1_up":
-            _V_INIT_1_ += 1
-            if _V_INIT_1_ >= _V_INIT_2_:
-                _V_INIT_2_ = _V_INIT_1_
-                main_window.find_element("number_input_2").update(_V_INIT_2_)
-            main_window.find_element("number_input_1").update(_V_INIT_1_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        elif events == "input_1_down":
-            _V_INIT_1_ -= 1
-            if _V_INIT_1_ <= 0:
-                _V_INIT_1_ = 0
-            if _V_INIT_1_ >= _V_INIT_2_:
-                _V_INIT_2_ = _V_INIT_1_
-                main_window.find_element("number_input_2").update(_V_INIT_2_)
-            main_window.find_element("number_input_1").update(_V_INIT_1_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        if events == "input_2_up":
-            _V_INIT_2_ += 1
-            main_window.find_element("number_input_2").update(_V_INIT_2_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        elif events == "input_2_down":
-            _V_INIT_2_ -= 1
-            if _V_INIT_2_ <= 0:
-                _V_INIT_2_ = 0
-            if _V_INIT_2_ < _V_INIT_1_:
-                _V_INIT_1_ = _V_INIT_2_
-                main_window.find_element('number_input_1').update(_V_INIT_1_)
-            main_window.find_element("number_input_2").update(_V_INIT_2_)
-            main_window.Refresh()
-            time.sleep(_V_SLEEP_TIMER_)
-        if events == "return_letter_2":
-            if _C_ALPHABET_.index(values["return_letter_2"]) >= _C_ALPHABET_.index(values["return_letter_3"]):
-                try:
+        if events == "input_1_up":  # Up button pressed on Spinner_1
+            _V_INIT_1_ += 1  # add 1
+            if _V_INIT_1_ >= _V_INIT_2_:  # if the start of range is larger than the end of range
+                _V_INIT_2_ = _V_INIT_1_  # make ranges equal
+                main_window.find_element("number_input_2").update(_V_INIT_2_)  # show new value of end range in gui
+            main_window.find_element("number_input_1").update(_V_INIT_1_)  # show new value of start range in gui
+            main_window.Refresh()  # Refresh gui to show new values
+            time.sleep(_V_SLEEP_TIMER_)  # wait the hard coded time between realtime button inputs
+        elif events == "input_1_down":  # Down button on Spinner_1
+            _V_INIT_1_ -= 1  # subtract 1
+            if _V_INIT_1_ <= 0:  # If value is negative
+                _V_INIT_1_ = 0  # make it 0
+            if _V_INIT_1_ >= _V_INIT_2_:  # is the value of the start is greater than or equal to end range
+                _V_INIT_2_ = _V_INIT_1_  # make them equal
+                main_window.find_element("number_input_2").update(_V_INIT_2_)  # update end range value
+            main_window.find_element("number_input_1").update(_V_INIT_1_)  # update start range value
+            main_window.Refresh()  # show new values in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded time between realtime button presses
+        if events == "input_2_up":  # Spinner_2 up button pressed
+            _V_INIT_2_ += 1  # add 1
+            main_window.find_element("number_input_2").update(_V_INIT_2_)  # update value
+            main_window.Refresh()  # show value in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded time in between realtime button presses
+        elif events == "input_2_down":  # Spinner_2 button down
+            _V_INIT_2_ -= 1  # subtract 1
+            if _V_INIT_2_ <= 0:  # if negative
+                _V_INIT_2_ = 0  # make 0
+            if _V_INIT_2_ < _V_INIT_1_:  # if less than start range
+                _V_INIT_1_ = _V_INIT_2_  # make ranges equal
+                main_window.find_element('number_input_1').update(_V_INIT_1_)  # update start range value
+            main_window.find_element("number_input_2").update(_V_INIT_2_)  # update end range value
+            main_window.Refresh()  # show new values in gui
+            time.sleep(_V_SLEEP_TIMER_)  # wait hard coded time between realtime button presses
+        if events == "return_letter_2":  # If start range letter dropdown pressed/changed
+            if _C_ALPHABET_.index(values["return_letter_2"]) >= _C_ALPHABET_.index(values["return_letter_3"]):  # if start range letter comes after end range letter
+                try:  # attempt to make end range letter 1 more than start range
                     main_window.find_element("return_letter_3").update(_C_ALPHABET_[_C_ALPHABET_.index(values["return_letter_2"]) + 1])
-                except IndexError:
+                except IndexError:  # make start range 1 letter less if at Z
                     main_window.find_element("return_letter_3").update(_C_ALPHABET_[-1])
-        if events == "return_letter_3":
-            if _C_ALPHABET_.index(values["return_letter_3"]) <= _C_ALPHABET_.index(values["return_letter_2"]):
-                try:
+        if events == "return_letter_3":  # if dropdown menu for end letter range pressed/changed
+            if _C_ALPHABET_.index(values["return_letter_3"]) <= _C_ALPHABET_.index(values["return_letter_2"]):  # if letter is before start range
+                try:  # make start range 1 less than end range
                     main_window.find_element("return_letter_2").update(_C_ALPHABET_[_C_ALPHABET_.index(values["return_letter_3"]) - 1])
-                except IndexError:
+                except IndexError:  # make start range "A" if failed
                     main_window.find_element("return_letter_2").update(_C_ALPHABET_[0])
         if events == "input_3_up":
             _V_INIT_3_ += 1
