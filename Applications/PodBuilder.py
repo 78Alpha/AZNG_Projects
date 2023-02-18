@@ -5,7 +5,7 @@ import sys
 import webbrowser
 from Encrypt import decrypt, decrypt_file, get_link  # Import necessary elements from Encrypt Module
 
-version = "2.0.2"
+version = "2.0.3"
 
 # Custom Button Image
 custom_button: bytes = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXMAAAOkAAADpAGRLZh1AAAC0UlEQVRoge2br24iURSHfyXBgJkaDIhBY4rB0kdAXtk+QeENtk/Q7hO0dVfyCJCgMGAwGEaAwTAGDGbzm5zLDgVaIMB0l/MlhKYJDHO+nHvunzM3OABrrQegBqAKwAdwB8A75DuugBBAH0AAoA2gaYwJ973tvYRYa+8BPIkM5HK56JXJZJDNZq9dwBrz+RyLxQLT6TR6CU0Av40xre8+/6UQay2z4IUiKMD3fRSLxdPfxX/MaDRCEARODsU0jDHBrjveKcRa+0AZ2WzWq1QqUUYox0Mh3W6XGRSKlPe9hVhr65TBbCiXy0in06riBCyXS/R6vShrRMrr52/dEOJkMCt0eDoPFMJs2SZlTYgMU28q4/zEpDzGh6+U+8MVcIpQGecnFucXiX1EKnblqICzZiiXgbFmzGUm+1eIrDNqHKq0gF8OxpoxZ+zFwSpDntxiT7kssbhz4Y0b2Q6ZaSFPjliBv0257RCVkRyFQsFdu0YhVR2qkoW1RBxUKcRXIckjDnwKueOurZIs4uCOQjzdQk8eceClfvjvvDoiIdyFVJLFOaCQVhjufcKonAlx0KKQcDabaZwTRhyEFNKOnf0qCSEO2hTS5Pg1mUzURUIw9lJDmik5cG+pkOSQI90WXbhp7wf/qcX98jDmkgwfcNNeOULs8wBeuSwS8747xo0vDBssLMPhUJVcCMZainnDXXElRLrqnmlMZ13nhzGW7HiOdzSubZ0YY34BeO90OlpPzghjyxgz1hLzFbsa5d4APOgp4umJnQ5SxuPnC3zVSspOiHo+n3fdEf/Ujf802ITNIUpmVK/GmMa2n/hdszU7IZgtPjOlVCqpmAOhiMFg4NYagTTG7eyC3/dxhLp0Rfie50VnwHyPHT0qAos1V92sE+Px2NXiQB5H2OjlPUpITIx7WOdeHtZRdsOHdpgJbWNMc984HSRkiyBPxWzARd5xU1QAfwDvPzbqRGQg7QAAAABJRU5ErkJggg=="
@@ -36,7 +36,7 @@ def master_design(prior_recipe) -> None:
     The Clear button clears the UI of its last completed recipe, the previous recipe is kept in the event a user made a
     mistake and must go back to rebuild the pod. 
 
-    The Mother button calls to open the Mother program in the default browser, it will not be activated unless you are
+    The Pod Manager (formerly Mother) button calls to open the Mother program in the default browser, it will not be activated unless you are
     within the business network.
 
     The exit button simply exits the application.
@@ -85,7 +85,7 @@ def master_design(prior_recipe) -> None:
                     key="clear",
                     tooltip="Clear input text box",
                     enable_events=True),
-         gui.Button("Mother",
+         gui.Button("Pod Manager",
                     image_data=custom_button,
                     button_color=("orange", "white"),
                     border_width=0,
@@ -125,8 +125,7 @@ def master_design(prior_recipe) -> None:
             "recipe_button")  # call back to Recipe button element for updating
         can_start_process: gui.Button = window.find_element("start")  # call back to Start button element for updating
         mother: gui.Button = window.find_element("Mother")  # call back to the Mother button for updating
-        events, values = window.Read(timeout=500,
-                                     timeout_key='timed')  # Read the textbox and button input every frame
+        events, values = window.Read(timeout_key='timed')  # Read the textbox and button input every frame
         if events is gui.WINDOW_CLOSED:
             # window.Close()
             sys.exit()
@@ -158,6 +157,7 @@ def master_design(prior_recipe) -> None:
         elif events == "exit":  # Exit button response
             break  # Simply break out of the loop into exit
         elif events == "clear":  # Clear button response
+            window.find_element("recipe").Update(disabled=False)
             window.find_element('recipe').Update("")  # Clear recipe text bot
             window.find_element('update').update_bar(0, 1)  # Clear progress bar
             can_start_process.Update(disabled=True)
@@ -166,11 +166,14 @@ def master_design(prior_recipe) -> None:
         elif events == "Mother":  # Mother response
             webbrowser.open(get_link(enc_data=_C_Mother_), 1, True)  # Decrypt and open link if possible
         elif events == "start":  # Start button response
+
             # Alert user of process start
             alert_window("Bring Pod Manager into focus before proceeding!")
             window.find_element('recipe_button').Update(disabled=True)  # Disable recipe button until done
-            window.find_element('start').Update(disabled=True)  # Disable start button unitl done
-            # window.find_element('clear').Update(disabled=True)  # Disable clear until done
+            window.find_element('recipe').Update(disabled=True)
+            #window.find_element('start').Update(disabled=True)  # Disable start button unitl done
+            window.find_element('start').Update("Stop")
+            window.find_element('clear').Update(disabled=True)  # Disable clear until done
             window.find_element('Mother').Update(disabled=True)  # Disable Mother until done
             window.Refresh()  # Refresh window to reflect these changes immediately
 
@@ -194,27 +197,35 @@ def master_design(prior_recipe) -> None:
                                                          list_len)  # Update progress bar to reflect status of sorting
             count: int = 0  # Reset counter
             print(f"NEWDICT: {new_dict}")
+            state_counter = False
             for face, row in new_dict.items():  # Iterate over pod faces
                 for level, bins in reversed(row.items()):  # Iterate over bins on face in build order
                     for pod_bin in bins:  # Output ordered bins into creation tool
                         print(f"Working Bin: {(pod_bin.upper())[:size_ref]}")
                         temp_events, temp_values = window.Read(timeout=0)
-                        if temp_events == "clear":
+                        if temp_events == "start":
+                            # window.find_element("recipe").Update(disabled=True)
                             # window.find_element('recipe').Update("")  # Clear recipe text bot
                             window.find_element('update').update_bar(0, 1)  # Clear progress bar
-                            can_start_process.Update(disabled=True)
+                            #can_start_process.Update(disabled=True)
+                            window.find_element("start").Update("Start")
                             can_get_recipe.Update(disabled=True)
                             window.Refresh()
-                            window.close()
+                            #window.close()
+                            state_counter = True
                             return values['recipe']
-                        pyautogui.typewrite(f"{(pod_bin.upper())[:size_ref]}\n", )  # Emulate scanner
-                        time.sleep(delay)  # User input delay for display
-                        count += 1  # Increment counter
-                        window.find_element('update').update_bar(count, list_len)  # Update Progress bar
+                        if state_counter:
+                            break
+                        else:
+                            pyautogui.typewrite(f"{(pod_bin.upper())[:size_ref]}\n", )  # Emulate scanner
+                            time.sleep(delay)  # User input delay for display
+                            count += 1  # Increment counter
+                            window.find_element('update').update_bar(count, list_len)  # Update Progress bar
             alert_window("Pod Building Complete!")  # Alert user of completion
             window.find_element('update').update_bar(0, 1)  # Reset progress bar
             window.find_element('recipe_button').Update(disabled=False)  # Enable recipe button
             window.find_element('start').Update(disabled=False)  # Enable start button
+            window.find_element('start').Update("Start")
             window.find_element('clear').Update(disabled=False)  # Enable clear button
             window.find_element('exit').Update(disabled=False)  # Enable exit
             window.find_element('Mother').Update(disabled=False)  # Enable mother
