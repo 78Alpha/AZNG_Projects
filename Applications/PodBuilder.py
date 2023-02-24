@@ -5,7 +5,7 @@ import sys
 import webbrowser
 from Encrypt import decrypt, decrypt_file, get_link  # Import necessary elements from Encrypt Module
 
-version = "2.0.3"
+version = "2.0.4"
 
 # Custom Button Image
 custom_button: bytes = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXMAAAOkAAADpAGRLZh1AAAC0UlEQVRoge2br24iURSHfyXBgJkaDIhBY4rB0kdAXtk+QeENtk/Q7hO0dVfyCJCgMGAwGEaAwTAGDGbzm5zLDgVaIMB0l/MlhKYJDHO+nHvunzM3OABrrQegBqAKwAdwB8A75DuugBBAH0AAoA2gaYwJ973tvYRYa+8BPIkM5HK56JXJZJDNZq9dwBrz+RyLxQLT6TR6CU0Av40xre8+/6UQay2z4IUiKMD3fRSLxdPfxX/MaDRCEARODsU0jDHBrjveKcRa+0AZ2WzWq1QqUUYox0Mh3W6XGRSKlPe9hVhr65TBbCiXy0in06riBCyXS/R6vShrRMrr52/dEOJkMCt0eDoPFMJs2SZlTYgMU28q4/zEpDzGh6+U+8MVcIpQGecnFucXiX1EKnblqICzZiiXgbFmzGUm+1eIrDNqHKq0gF8OxpoxZ+zFwSpDntxiT7kssbhz4Y0b2Q6ZaSFPjliBv0257RCVkRyFQsFdu0YhVR2qkoW1RBxUKcRXIckjDnwKueOurZIs4uCOQjzdQk8eceClfvjvvDoiIdyFVJLFOaCQVhjufcKonAlx0KKQcDabaZwTRhyEFNKOnf0qCSEO2hTS5Pg1mUzURUIw9lJDmik5cG+pkOSQI90WXbhp7wf/qcX98jDmkgwfcNNeOULs8wBeuSwS8747xo0vDBssLMPhUJVcCMZainnDXXElRLrqnmlMZ13nhzGW7HiOdzSubZ0YY34BeO90OlpPzghjyxgz1hLzFbsa5d4APOgp4umJnQ5SxuPnC3zVSspOiHo+n3fdEf/Ujf802ITNIUpmVK/GmMa2n/hdszU7IZgtPjOlVCqpmAOhiMFg4NYagTTG7eyC3/dxhLp0Rfie50VnwHyPHT0qAos1V92sE+Px2NXiQB5H2OjlPUpITIx7WOdeHtZRdsOHdpgJbWNMc984HSRkiyBPxWzARd5xU1QAfwDvPzbqRGQg7QAAAABJRU5ErkJggg=="
@@ -126,6 +126,7 @@ def master_design(prior_recipe) -> None:
         can_start_process: gui.Button = window.find_element("start")  # call back to Start button element for updating
         mother: gui.Button = window.find_element("Mother")  # call back to the Mother button for updating
         events, values = window.Read(timeout_key='timed')  # Read the textbox and button input every frame
+        window.find_element('start').Update(disabled=True)
         if events is gui.WINDOW_CLOSED:
             # window.Close()
             sys.exit()
@@ -172,12 +173,12 @@ def master_design(prior_recipe) -> None:
             window.find_element('recipe_button').Update(disabled=True)  # Disable recipe button until done
             window.find_element('recipe').Update(disabled=True)
             #window.find_element('start').Update(disabled=True)  # Disable start button unitl done
-            window.find_element('start').Update("Stop")
+            window.find_element('start').Update("Stop", disabled=False)
             window.find_element('clear').Update(disabled=True)  # Disable clear until done
             window.find_element('Mother').Update(disabled=True)  # Disable Mother until done
             window.Refresh()  # Refresh window to reflect these changes immediately
 
-            base_list: list = values['recipe'][48:].replace('*', '-').strip('!').split(
+            base_list: list = values['recipe'][48:].replace('*', '-').split('!')[0].split(
                 '>')  # Recipe without header (BINS only)
             list_len: int = len(base_list)  # Number of bins to iterate over for progress bars
 
