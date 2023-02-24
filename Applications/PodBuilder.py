@@ -24,7 +24,7 @@ _C_POD_BUILDER_: bytes = b'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADl0lEQ
 size_ref: int = len("P-0-A000B000")
 
 
-def master_design(prior_recipe) -> None:
+def master_design() -> None:
     max_value: int = 1  # General default
     count: int = 0  # Count variable used in progress bars
     """
@@ -55,7 +55,7 @@ def master_design(prior_recipe) -> None:
     The UI is themed orange and white per normal Amazon external theming.
     """
     ui: list = [
-        [gui.InputText(default_text=prior_recipe,
+        [gui.InputText(default_text='',
                        text_color="gray",
                        key='recipe',
                        enable_events=True,
@@ -80,7 +80,7 @@ def master_design(prior_recipe) -> None:
                     border_width=0,
                     disabled=False,
                     key="start",
-                    tooltip="Initiate Pod Building",
+                    tooltip="Start and Stop pod building",
                     enable_events=True),
          gui.Button("Reset",
                     image_data=custom_button,
@@ -133,8 +133,7 @@ def master_design(prior_recipe) -> None:
         events, values = window.Read(timeout_key='timed')  # Read the textbox and button input every frame
         window.find_element('start').Update(disabled=True)
         if events is gui.WINDOW_CLOSED:
-            # window.Close()
-            sys.exit()
+            sys.exit()  # Exit whole thing instead of clsoing window and leaving loose threads
         try:  # Attempt to decrypt PodManager URL, lock under failure
             PodManager.Update(disabled=True) if "http" not in get_link(enc_data=_C_PodManager_) else window.find_element(
                 "PodManager").Update(disabled=False)
@@ -142,7 +141,7 @@ def master_design(prior_recipe) -> None:
         except UnicodeDecodeError:  # Lock under ANY key failure
             PodManager.Update(disabled=True)
             print("Link decryption FAILED")
-        print(events, values)
+        print(events, values)  # Debug, do not remove
         delay: float = 0.0 if values['delay'] == '' else float(f"0.{values['delay']}")  # Delay default if empty
         print(f"DELAY: {delay}")
         if values['recipe'].count('!') == 1 and '*' in values['recipe']:  # Is Part in Standard Recipe?
@@ -163,11 +162,11 @@ def master_design(prior_recipe) -> None:
         elif events == "exit":  # Exit button response
             break  # Simply break out of the loop into exit
         elif events == "clear":  # Clear button response
-            window.find_element("recipe").Update(disabled=False)
+            window.find_element("recipe").Update(disabled=False)  # ALlow text input again
             window.find_element('recipe').Update("")  # Clear recipe text bot
             window.find_element('update').update_bar(0, 1)  # Clear progress bar
-            can_start_process.Update(disabled=True)
-            can_get_recipe.Update(disabled=True)
+            can_start_process.Update(disabled=True)  # Allow user to start building again
+            can_get_recipe.Update(disabled=True)  # Re-enable the recipe button in case user needs to reference it again
             window.Refresh()
         elif events == "PodManager":  # PodManager response
             webbrowser.open(get_link(enc_data=_C_PodManager_), 1, True)  # Decrypt and open link if possible
@@ -177,7 +176,6 @@ def master_design(prior_recipe) -> None:
             alert_window("Bring Pod Manager into focus before proceeding!")
             window.find_element('recipe_button').Update(disabled=True)  # Disable recipe button until done
             window.find_element('recipe').Update(disabled=True)
-            #window.find_element('start').Update(disabled=True)  # Disable start button unitl done
             window.find_element('start').Update("Stop", disabled=False)
             window.find_element('clear').Update(disabled=True)  # Disable clear until done
             window.find_element('PodManager').Update(disabled=True)  # Disable PodManager until done
@@ -203,24 +201,20 @@ def master_design(prior_recipe) -> None:
                                                          list_len)  # Update progress bar to reflect status of sorting
             count: int = 0  # Reset counter
             print(f"NEWDICT: {new_dict}")
-            state_counter = False
+            state_counter = False  # If set to true, will break out of the writing loop. Prevents ghost scans on restart.
             for face, row in new_dict.items():  # Iterate over pod faces
                 for level, bins in reversed(row.items()):  # Iterate over bins on face in build order
                     for pod_bin in bins:  # Output ordered bins into creation tool
                         print(f"Working Bin: {(pod_bin.upper())[:size_ref]}")
-                        temp_events, temp_values = window.Read(timeout=0)
-                        if temp_events == "start":
-                            # window.find_element("recipe").Update(disabled=True)
-                            # window.find_element('recipe').Update("")  # Clear recipe text bot
+                        temp_events, temp_values = window.Read(timeout=0)  # Force read the window at max speed to catch all input
+                        if temp_events == "start":  # check for Stop and reset
                             window.find_element('update').update_bar(0, 1)  # Clear progress bar
-                            #can_start_process.Update(disabled=True)
-                            window.find_element("start").Update("Start")
-                            can_get_recipe.Update(disabled=True)
-                            window.Refresh()
-                            #window.close()
-                            state_counter = True
-                            return values['recipe']
-                        if state_counter:
+                            window.find_element("start").Update("Start")  # Change 'Stop' button to 'Start' again
+                            can_get_recipe.Update(disabled=True)  # Attempt to block text input to prevent new recipe
+                            window.Refresh()  # reflect window changes
+                            state_counter = True  # Set state counter to break in case it proceeds to a further event
+                            return values['recipe']  # Return recipe to text input
+                        if state_counter:  # Redundant catch
                             break
                         else:
                             pyautogui.typewrite(f"{(pod_bin.upper())[:size_ref]}\n", )  # Emulate scanner
@@ -231,7 +225,7 @@ def master_design(prior_recipe) -> None:
             window.find_element('update').update_bar(0, 1)  # Reset progress bar
             window.find_element('recipe_button').Update(disabled=False)  # Enable recipe button
             window.find_element('start').Update(disabled=False)  # Enable start button
-            window.find_element('start').Update("Start")
+            window.find_element('start').Update("Start")  # Change 'Stop' button to 'Start' after completion
             window.find_element('clear').Update(disabled=False)  # Enable clear button
             window.find_element('exit').Update(disabled=False)  # Enable exit
             window.find_element('PodManager').Update(disabled=False)  # Enable PodManager
@@ -330,6 +324,5 @@ def micro_recipe(input_: str) -> tuple:
 
 
 if __name__ == '__main__':
-    prior_recipe = ''
     while True:
-        prior_recipe = master_design(prior_recipe)
+        master_design()
