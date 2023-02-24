@@ -15,8 +15,8 @@ custom_button: bytes = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXM
 # Custom logo for application
 custom_logo: bytes = b'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'
 
-# Encrypted Mother URL
-_C_Mother_: bytes = b'\xe1\xebs\x90\x0eo\xcdeQ\x1d\x08L<\x7f\x8e\xf2R\x17P\x04W\xf1lS\xb8.\x1d\xac\x92K\x01\x9c\xf4@\xa5E\xd7\x9e\xfaQ\xa9\xcc\xad\x7f\xfb\x8ct\x9b\x920"\x85\x13\x1e\xf4dQm\x8c\x9d\x81\x02)\x03'
+# Encrypted PodManager URL
+_C_PodManager_: bytes = b'\xe1\xebs\x90\x0eo\xcdeQ\x1d\x08L<\x7f\x8e\xf2R\x17P\x04W\xf1lS\xb8.\x1d\xac\x92K\x01\x9c\xf4@\xa5E\xd7\x9e\xfaQ\xa9\xcc\xad\x7f\xfb\x8ct\x9b\x920"\x85\x13\x1e\xf4dQm\x8c\x9d\x81\x02)\x03'
 # Pod builder logo
 _C_POD_BUILDER_: bytes = b'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADl0lEQVR4nO3cv04UURiG8U/DJsRWIzEU01pgwVJhRbGtiQmNNyC34DVwCxgugcpSEkMDVLOFdDaS2GC0JZtgWBsWZZlZ5v935rzPr1RxJvmec2YzO4MZAAAA5DzyOvDV+fLU69ghGiQTl1k89jgowkEA4ghAHAGIIwBxS94nEJqfS89a/f+f//nV6v9fVnABtD0As/CG4IlLgDgCEEcA4ghAHAGIIwBxBCCOAMQRgDgCEEcA4ghAHAGIIwBxPBUcCJ4KhgsCEEcA4ghAHAGIIwBxBCCOAMQRgDgCEEcA4ng1rOPjh/ZaGjuAOAIQRwDiCEAcAYgjAHEEII4AxBGAOAIQRwDiCEAcAYgjAHEEII53AwPBu4FwQQDiCEAcAYgjAHEEII4AxBGAOAIQRwDiCEAc7wZ2fHzeDURQCECcewCb22v29feJ92nIcg1gkExsb++jmRkROHELYJBMLE3HXofHDa8ApvPDHw7XnU5Fm0cA94ZvZpamYxskE4fT0dZ1AJnDn0nTsa2u/jAzs4uLT12dk7QuH0RcOPw8KytvGj+REG8ERf9QaNUPfOwE7eosgOFw/bbwnZ33pX6WCNrj9l6AVbgkNHU54BLwj9t9gKvzZXaCALjeCTw5OCv9M0TQLNdXw+rc/n31dLPBs/EndwkwqzdEvjtohvu3gUTgyz0AMyLwFEQAR6fX9vLz28o/TwTVuQcwSCb2+vsLM7NaEaAa9wdCLneTO39WJQK+Sq7OLYCj0+t7w58pGwFfJVfn9kDIbNvPUycCPhMU53HzYetyN/lS5B8O3l3UGmafbhap3Aialhm+Wb+G2EddBrCVd82fNxv+zP8RFP0CiXCK6WrbmVYdfpbN7bXbx8mz9HH4MV8CKq/8PCcHZ7k7QR+H76nt6hpd+fPmPyD2efgx7gAMvwfaej288LZ/vLFv9i3770aj0YJVsW5pOp6a3X3eMESHh4cFfi3uqP0TydBGAIVX/vHGfq0DhT74Pmj6ElBu5cNdkwEUvsnz5MM5KzcQTQVQeOUz/LA08Rmg8DWf4Yen7g7Ayu+5OjsAKz8CVXcAhh+JKgGw7Uek7CWAlR+ZMjsAKz9CRXcAVn6kiuwArPyIPbQDsPIjt2gHYOULyNsBWPkisnYAhi8kK4BCQ2X4ccj8DPDQcBl+PHI/BOYNmeHHZeF9gPlhM/z4PHgjaDZ0hh+nQt8FMPx4uf+KGPgiAHEEAACApr98hyNlsb+5ggAAAABJRU5ErkJggg=='
 
@@ -36,12 +36,12 @@ def master_design(prior_recipe) -> None:
 
     The recipe button allows a user to get the recipe from SAM2 card in a pod.
 
-    The Start button starts the process of construction but only after a recipe is supplied via the SAM2 card.
+    The Start button starts the process of construction but only after a recipe is supplied via the SAM2 card. Switched
+    to "STOP" after frst pressed to allow for stopping mid-scan if an issue arrises.
 
-    The Clear button clears the UI of its last completed recipe, the previous recipe is kept in the event a user made a
-    mistake and must go back to rebuild the pod. 
+    The Clear button clears the UI of its last completed recipe.
 
-    The Pod Manager (formerly Mother) button calls to open the Mother program in the default browser, it will not be activated unless you are
+    The Pod Manager button calls to open the PodManager program in the default browser, it will not be activated unless you are
     within the business network.
 
     The exit button simply exits the application.
@@ -50,7 +50,7 @@ def master_design(prior_recipe) -> None:
     to corruption of external environment.
 
     The delay spinner allows input of a delay number, this allows the "keyboard" input to be delayed, this is only for
-    display purposes as the end result is the same, regardless of the interface feedback from Mother.
+    display purposes as the end result is the same, regardless of the interface feedback from PodManager.
 
     The UI is themed orange and white per normal Amazon external theming.
     """
@@ -95,7 +95,7 @@ def master_design(prior_recipe) -> None:
                     button_color=("orange", "white"),
                     border_width=0,
                     disabled=False,
-                    key="Mother",
+                    key="PodManager",
                     tooltip="Open Pod Manager in default browser",
                     enable_events=True),
          gui.Button("Exit",
@@ -129,18 +129,18 @@ def master_design(prior_recipe) -> None:
         can_get_recipe: gui.Button = window.find_element(
             "recipe_button")  # call back to Recipe button element for updating
         can_start_process: gui.Button = window.find_element("start")  # call back to Start button element for updating
-        mother: gui.Button = window.find_element("Mother")  # call back to the Mother button for updating
+        PodManager: gui.Button = window.find_element("PodManager")  # call back to the PodManager button for updating
         events, values = window.Read(timeout_key='timed')  # Read the textbox and button input every frame
         window.find_element('start').Update(disabled=True)
         if events is gui.WINDOW_CLOSED:
             # window.Close()
             sys.exit()
-        try:  # Attempt to decrypt mother URL, lock under failure
-            mother.Update(disabled=True) if "http" not in get_link(enc_data=_C_Mother_) else window.find_element(
-                "Mother").Update(disabled=False)
+        try:  # Attempt to decrypt PodManager URL, lock under failure
+            PodManager.Update(disabled=True) if "http" not in get_link(enc_data=_C_PodManager_) else window.find_element(
+                "PodManager").Update(disabled=False)
             print("Decrypt of link SUCCESS")
         except UnicodeDecodeError:  # Lock under ANY key failure
-            mother.Update(disabled=True)
+            PodManager.Update(disabled=True)
             print("Link decryption FAILED")
         print(events, values)
         delay: float = 0.0 if values['delay'] == '' else float(f"0.{values['delay']}")  # Delay default if empty
@@ -169,8 +169,8 @@ def master_design(prior_recipe) -> None:
             can_start_process.Update(disabled=True)
             can_get_recipe.Update(disabled=True)
             window.Refresh()
-        elif events == "Mother":  # Mother response
-            webbrowser.open(get_link(enc_data=_C_Mother_), 1, True)  # Decrypt and open link if possible
+        elif events == "PodManager":  # PodManager response
+            webbrowser.open(get_link(enc_data=_C_PodManager_), 1, True)  # Decrypt and open link if possible
         elif events == "start":  # Start button response
 
             # Alert user of process start
@@ -180,7 +180,7 @@ def master_design(prior_recipe) -> None:
             #window.find_element('start').Update(disabled=True)  # Disable start button unitl done
             window.find_element('start').Update("Stop", disabled=False)
             window.find_element('clear').Update(disabled=True)  # Disable clear until done
-            window.find_element('Mother').Update(disabled=True)  # Disable Mother until done
+            window.find_element('PodManager').Update(disabled=True)  # Disable PodManager until done
             window.Refresh()  # Refresh window to reflect these changes immediately
 
             base_list: list = values['recipe'][48:].replace('*', '-').split('!')[0].split(
@@ -234,7 +234,7 @@ def master_design(prior_recipe) -> None:
             window.find_element('start').Update("Start")
             window.find_element('clear').Update(disabled=False)  # Enable clear button
             window.find_element('exit').Update(disabled=False)  # Enable exit
-            window.find_element('Mother').Update(disabled=False)  # Enable mother
+            window.find_element('PodManager').Update(disabled=False)  # Enable PodManager
             window.Refresh()  # Refresh window to reflect changes
             count: int = 0  # Reset counter
     window.Close()  # Close window process
