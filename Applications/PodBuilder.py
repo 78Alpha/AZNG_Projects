@@ -1,4 +1,4 @@
-import PySimpleGUI as gui
+import FreeSimpleGUI as gui
 import pyautogui
 import time
 import sys
@@ -8,7 +8,7 @@ try:
 except ModuleNotFoundError:
     print("Running without Encryption capabilities.")
 
-version = "2.0.4"
+version = "2.0.7"
 
 # Custom Button Image
 custom_button: bytes = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXMAAAOkAAADpAGRLZh1AAAC0UlEQVRoge2br24iURSHfyXBgJkaDIhBY4rB0kdAXtk+QeENtk/Q7hO0dVfyCJCgMGAwGEaAwTAGDGbzm5zLDgVaIMB0l/MlhKYJDHO+nHvunzM3OABrrQegBqAKwAdwB8A75DuugBBAH0AAoA2gaYwJ973tvYRYa+8BPIkM5HK56JXJZJDNZq9dwBrz+RyLxQLT6TR6CU0Av40xre8+/6UQay2z4IUiKMD3fRSLxdPfxX/MaDRCEARODsU0jDHBrjveKcRa+0AZ2WzWq1QqUUYox0Mh3W6XGRSKlPe9hVhr65TBbCiXy0in06riBCyXS/R6vShrRMrr52/dEOJkMCt0eDoPFMJs2SZlTYgMU28q4/zEpDzGh6+U+8MVcIpQGecnFucXiX1EKnblqICzZiiXgbFmzGUm+1eIrDNqHKq0gF8OxpoxZ+zFwSpDntxiT7kssbhz4Y0b2Q6ZaSFPjliBv0257RCVkRyFQsFdu0YhVR2qkoW1RBxUKcRXIckjDnwKueOurZIs4uCOQjzdQk8eceClfvjvvDoiIdyFVJLFOaCQVhjufcKonAlx0KKQcDabaZwTRhyEFNKOnf0qCSEO2hTS5Pg1mUzURUIw9lJDmik5cG+pkOSQI90WXbhp7wf/qcX98jDmkgwfcNNeOULs8wBeuSwS8747xo0vDBssLMPhUJVcCMZainnDXXElRLrqnmlMZ13nhzGW7HiOdzSubZ0YY34BeO90OlpPzghjyxgz1hLzFbsa5d4APOgp4umJnQ5SxuPnC3zVSspOiHo+n3fdEf/Ujf802ITNIUpmVK/GmMa2n/hdszU7IZgtPjOlVCqpmAOhiMFg4NYagTTG7eyC3/dxhLp0Rfie50VnwHyPHT0qAos1V92sE+Px2NXiQB5H2OjlPUpITIx7WOdeHtZRdsOHdpgJbWNMc984HSRkiyBPxWzARd5xU1QAfwDvPzbqRGQg7QAAAABJRU5ErkJggg=="
@@ -20,6 +20,17 @@ _C_PodManager_: bytes = b'\xe1\xebs\x90\x0eo\xcdeQ\x1d\x08L<\x7f\x8e\xf2R\x17P\x
 # Pod builder logo
 _C_POD_BUILDER_: bytes = b'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADl0lEQVR4nO3cv04UURiG8U/DJsRWIzEU01pgwVJhRbGtiQmNNyC34DVwCxgugcpSEkMDVLOFdDaS2GC0JZtgWBsWZZlZ5v935rzPr1RxJvmec2YzO4MZAAAA5DzyOvDV+fLU69ghGiQTl1k89jgowkEA4ghAHAGIIwBxS94nEJqfS89a/f+f//nV6v9fVnABtD0As/CG4IlLgDgCEEcA4ghAHAGIIwBxBCCOAMQRgDgCEEcA4ghAHAGIIwBxPBUcCJ4KhgsCEEcA4ghAHAGIIwBxBCCOAMQRgDgCEEcA4ng1rOPjh/ZaGjuAOAIQRwDiCEAcAYgjAHEEII4AxBGAOAIQRwDiCEAcAYgjAHEEII53AwPBu4FwQQDiCEAcAYgjAHEEII4AxBGAOAIQRwDiCEAc7wZ2fHzeDURQCECcewCb22v29feJ92nIcg1gkExsb++jmRkROHELYJBMLE3HXofHDa8ApvPDHw7XnU5Fm0cA94ZvZpamYxskE4fT0dZ1AJnDn0nTsa2u/jAzs4uLT12dk7QuH0RcOPw8KytvGj+REG8ERf9QaNUPfOwE7eosgOFw/bbwnZ33pX6WCNrj9l6AVbgkNHU54BLwj9t9gKvzZXaCALjeCTw5OCv9M0TQLNdXw+rc/n31dLPBs/EndwkwqzdEvjtohvu3gUTgyz0AMyLwFEQAR6fX9vLz28o/TwTVuQcwSCb2+vsLM7NaEaAa9wdCLneTO39WJQK+Sq7OLYCj0+t7w58pGwFfJVfn9kDIbNvPUycCPhMU53HzYetyN/lS5B8O3l3UGmafbhap3Aialhm+Wb+G2EddBrCVd82fNxv+zP8RFP0CiXCK6WrbmVYdfpbN7bXbx8mz9HH4MV8CKq/8PCcHZ7k7QR+H76nt6hpd+fPmPyD2efgx7gAMvwfaej288LZ/vLFv9i3770aj0YJVsW5pOp6a3X3eMESHh4cFfi3uqP0TydBGAIVX/vHGfq0DhT74Pmj6ElBu5cNdkwEUvsnz5MM5KzcQTQVQeOUz/LA08Rmg8DWf4Yen7g7Ayu+5OjsAKz8CVXcAhh+JKgGw7Uek7CWAlR+ZMjsAKz9CRXcAVn6kiuwArPyIPbQDsPIjt2gHYOULyNsBWPkisnYAhi8kK4BCQ2X4ccj8DPDQcBl+PHI/BOYNmeHHZeF9gPlhM/z4PHgjaDZ0hh+nQt8FMPx4uf+KGPgiAHEEAACApr98hyNlsb+5ggAAAABJRU5ErkJggg=='
 
+Decryption_check = True
+
+try:  # Attempt to decrypt PodManager URL, lock under failure
+    if "http" not in get_link(enc_data=_C_PodManager_):
+        print("Decrypt of link FAILED")
+    else:
+        Decryption_check = False
+        print("Decrypt of link SUCCESS")
+except:  # Lock under ANY key failure
+    Decryption_check = True
+    print("Link decryption FAILED")
 
 size_ref: int = len("P-0-A000B000")
 
@@ -78,7 +89,7 @@ def master_design() -> None:
                     image_data=custom_button,
                     button_color=("Orange", "white"),
                     border_width=0,
-                    disabled=False,
+                    disabled=True,
                     key="start",
                     tooltip="Start and Stop pod building",
                     enable_events=True),
@@ -94,7 +105,7 @@ def master_design() -> None:
                     image_data=custom_button,
                     button_color=("orange", "white"),
                     border_width=0,
-                    disabled=False,
+                    disabled=Decryption_check,
                     key="PodManager",
                     tooltip="Open Pod Manager in default browser",
                     enable_events=True),
@@ -126,10 +137,9 @@ def master_design() -> None:
                                     icon=_C_POD_BUILDER_,
                                     location=(0, 0))
     while True:  # Keep reading window
-        can_get_recipe: gui.Button = window.find_element(
-            "recipe_button")  # call back to Recipe button element for updating
-        can_start_process: gui.Button = window.find_element("start")  # call back to Start button element for updating
-        PodManager: gui.Button = window.find_element("PodManager")  # call back to the PodManager button for updating
+        can_get_recipe = window.find_element("recipe_button")  # call back to Recipe button element for updating
+        can_start_process = window.find_element("start")  # call back to Start button element for updating
+        PodManager = window.find_element("PodManager")  # call back to the PodManager button for updating
         events, values = window.Read(timeout_key='timed')  # Read the textbox and button input every frame
         window.find_element('start').Update(disabled=True)
         if events is gui.WINDOW_CLOSED:
@@ -138,7 +148,7 @@ def master_design() -> None:
             PodManager.Update(disabled=True) if "http" not in get_link(enc_data=_C_PodManager_) else window.find_element(
                 "PodManager").Update(disabled=False)
             print("Decrypt of link SUCCESS")
-        except UnicodeDecodeError:  # Lock under ANY key failure
+        except:  # Lock under ANY key failure
             PodManager.Update(disabled=True)
             print("Link decryption FAILED")
         print(events, values)  # Debug, do not remove
@@ -173,7 +183,7 @@ def master_design() -> None:
         elif events == "start":  # Start button response
 
             # Alert user of process start
-            alert_window("Bring Pod Manager into focus before proceeding!")
+            alert_window("Bring Pod Manager into focus before proceeding! DO not run with CAPS LOCK!")
             window.find_element('recipe_button').Update(disabled=True)  # Disable recipe button until done
             window.find_element('recipe').Update(disabled=True)
             window.find_element('start').Update("Stop", disabled=False)
@@ -265,7 +275,8 @@ def recipe_window(recipe: tuple) -> None:
                                     background_color='white',
                                     button_color=("orange", "white"),
                                     grab_anywhere=True,
-                                    icon=custom_logo
+                                    icon=custom_logo,
+                                    disable_close=True
                                     )
 
     while True:  # Continue to refresh window to keep it alive
@@ -308,9 +319,13 @@ def alert_window(message: str) -> None:
                                     background_color='white',
                                     grab_anywhere=True,
                                     layout=alert,
-                                    icon=custom_logo)
+                                    icon=custom_logo,
+                                    disable_close=True)
     window.Read()  # Read window, pauses before closure
-    window.close()  # Clear up window
+    try:
+        window.Close()  # Kill window
+    except gui.WINDOW_CLOSED:
+        pass
 
 
 def micro_recipe(input_: str) -> tuple:
