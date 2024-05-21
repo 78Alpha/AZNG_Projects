@@ -1,4 +1,4 @@
-import PySimpleGUI as gui
+import FreeSimpleGUI as gui
 import os
 import sys
 
