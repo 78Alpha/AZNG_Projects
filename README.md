@@ -12,14 +12,9 @@ AZNG/Temp  >> Directory should not have files placed in it in the Repo, but for 
 
 ## Programs
 
-* AZNG Launcher
 * BinFilter
 * PodBuilder
 * Scanner
-
-### AZNG Launcher
-
-This application serves as the main launcher for FC associates. It will launch a session related to the role they have selected and provide them with the corrisponding or most relevent Labor Tracking code. This launcher relies on internal Amazon links and is not suitable for external uses without modification.
 
 ### BinFilter
 
