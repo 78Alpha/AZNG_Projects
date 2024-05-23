@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Barcode Generator</title>
+</head>
+<body>
+    <h1>Welcome to the Flask Image Display App</h1>
+        <h1>Enter Text</h1>
+    <form action="{{ url_for('process') }}" method="post">
+        <textarea name="text" rows="10" cols="30"></textarea><br>
+        <button type="submit">Process Text</button>
+    </form>
+</body>
+</html>
