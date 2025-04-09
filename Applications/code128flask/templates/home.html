@@ -1,14 +1,78 @@
+<!-- templates/home.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Barcode Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Launcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .container {
+            text-align: center;
+        }
+        .app-link {
+            display: inline-block;
+            margin: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        .app-link:hover {
+            background-color: #0056b3;
+        }
+        .placeholder {
+            background-color: #6c757d;
+        }
+        .placeholder:hover {
+            background-color: #5a6268;
+        }
+        .username-form {
+            margin-bottom: 20px;
+        }
+        .username-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .submit-button {
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Flask Image Display App</h1>
-        <h1>Enter Text</h1>
-    <form action="{{ url_for('process') }}" method="post">
-        <textarea name="text" rows="10" cols="30"></textarea><br>
-        <button type="submit">Process Text</button>
-    </form>
+    <div class="container">
+        <h1>Welcome to the App Launcher</h1>
+        <form class="username-form" method="GET" action="/tip">
+            <button type="submit" class="submit-button">Start Tip App</button>
+        </form>
+        <form class="username-form" method="GET" action="/barcode">
+            <button type="submit" class="submit-button">Barcode Generator</button>
+        </form>
+        <form class="username-form" method="GET" action="/reset">
+            <button type="submit" class="submit-button">Utility Codes</button>
+        </form>
+    </div>
 </body>
 </html>
