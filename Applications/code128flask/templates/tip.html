@@ -1,0 +1,81 @@
+<!-- templates/tip.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .tip-buttons button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .tip-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .custom-button {
+            background-color: #28a745;
+        }
+        .custom-button:hover {
+            background-color: #218838;
+        }
+        .home-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #6c757d;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        .home-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Select a Tip Amount</h1>
+        <p id="username">Tipping: AFM</p>
+        <div class="tip-buttons">
+            <form method="POST">
+                <button type="submit" name="tip" value="15">15%</button>
+                <button type="submit" name="tip" value="18">18%</button>
+                <button type="submit" name="tip" value="20">20%</button>
+                <button type="submit" name="tip" value="100">100%</button>
+            </form>
+        </div>
+        <a href="/" class="home-button">Return to Home</a>
+    </div>
+</body>
+</html>
