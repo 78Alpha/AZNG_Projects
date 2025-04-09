@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator</title>
+        <style>
+        .image-container {
+            display: flex;
+            justify-content: left;
+            gap: 20px;
+        }
+        .image-box {
+            position: relative;
+            width: 300px;
+        }
+        .image-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+        }
+        .image-text {
+            position: relative;
+            top: -10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Flask Image Display App</h1>
+        <h1>Enter Text</h1>
+    <form action="{{ url_for('process') }}" method="post">
+        <textarea name="text" rows="10" cols="30">{{old_text.strip(" ")}}</textarea><br>
+        <a href="/" class="return-button" id="return-to-home">Return to Home</a>
+        <button type="submit">Process Text</button>
+    </form>
+    <div>
+        {% for image in images %}
+                <h1>{{ image[1] }}</h1>
+                <div class="image-container">
+                <img src="{{ url_for('static', filename=image[0]) }}" alt="Image" style="width:auto;height:200;align:center">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
