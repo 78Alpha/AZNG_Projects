@@ -27,3 +27,7 @@ Pod Builder is a standalone application that is meant to work with Pod console i
 ### Scanner
 
 In the event a scanner is not present for input, you can use this app to push mass amounts of input or push input into apps that otherwise do not accept text.
+
+### Online Kit (Pinnacle Compatibility)
+
+https://Gantak.pythonanywhere.com/
