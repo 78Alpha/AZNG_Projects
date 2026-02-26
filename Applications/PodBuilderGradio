@@ -1,0 +1,64 @@
+import gradio as gui
+import pyautogui
+import time
+
+version = "2.0.7"
+
+size_ref: int = len("P-0-A000B000")
+
+
+def master_design(recipe, progress=gui.Progress()):
+    progress(0, "Countdown")
+    for i in progress.tqdm(range(3)):
+        time.sleep(1)
+        #progress(i / 10)
+    if not recipe.count('!') == 1 and '*' in str(recipe):  # Is Part in Standard Recipe?
+        return "NOT_RECIPE"  # Enable button
+    elif recipe.count('!') > 1:  # Check if a second recipe has been scanned (no check for partial recipe
+        return "MULTI_RECIPE"
+    base_list: list = recipe[48:].replace('*', '-').split('!')[0].split(
+        '>')  # Recipe without header (BINS only)
+    list_len: int = len(base_list)  # Number of bins to iterate over for progress bars
+
+    new_dict: dict = {"A": {},  # A-Face bins
+                      "B": {},  # B-face bins
+                      "C": {},  # C-face bins
+                      "D": {}}  # D-Face bins
+
+    for pod_bin in base_list:  # Iterate over all bins in the list to sort them
+        print(f"FACE: {pod_bin[0]}")
+        print(f"LABEL: {pod_bin[2]}")
+        new_dict[f"{pod_bin[0]}"][f"{pod_bin[2]}"] = [] if pod_bin[2] not in new_dict[f"{pod_bin[0]}"] else \
+            new_dict[f"{pod_bin[0]}"][f"{pod_bin[2]}"]  # Check dictionary for Face/Label/Bin
+        new_dict[f"{pod_bin[0]}"][f"{pod_bin[2]}"].append(pod_bin[3:])  # Append bin to Face/Row
+
+    print(f"NEWDICT: {new_dict}")
+    progress(0, "Bins")
+    for face, row in progress.tqdm(new_dict.items()):  # Iterate over pod faces
+        for level, bins in progress.tqdm(reversed(row.items())):  # Iterate over bins on face in build order
+            for pod_bin in progress.tqdm(bins):  # Output ordered bins into creation tool
+                #print(f"Working Bin: {(pod_bin.upper())[:size_ref]}")
+                pyautogui.write(f"{(pod_bin.upper())[:size_ref]}\n", interval=0.01)  # Emulate scanner
+                #time.sleep(1)
+    return "Done"
+
+
+def micro_recipe(input_: str) -> str:
+    recipe: list = (input_[:19].replace('*', '-')).split(",")  # Only parse through skin related header parts
+    print("Recipe Filter")
+    #return recipe[1], recipe[2]  # Return the type and version string, ignoring card version
+    return f"{recipe[1]} V.{recipe[2]}"
+
+
+if __name__ == '__main__':
+    with gui.Blocks() as demo:
+        recipe = gui.Textbox(label="recipe")
+        output = gui.Textbox(label="Skin")
+        output2 = gui.Textbox(label="Status")
+        prog = gui.Progress
+        recipe_btn = gui.Button("Recipe")
+        recipe_btn.click(fn=micro_recipe, inputs=recipe, outputs=output, api_name="recipe")
+        process_btn = gui.Button("Start")
+        process_btn.click(fn=master_design, inputs=recipe, outputs=output2, api_name="start")
+
+demo.launch()
