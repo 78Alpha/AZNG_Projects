@@ -48,9 +48,11 @@ def startup_dir_creation():
 def prepare_udq(target_name):
     Downloads_Folder = os.path.join(os.path.join(os.environ["USERPROFILE"]), "Downloads")
     file_ = glob.glob(f"{Downloads_Folder}\\udq*.csv")
+    print(Downloads_Folder)
     while len(file_) < 1:
         time.sleep(1)
         file_ = glob.glob(f"{Downloads_Folder}\\udq*.csv")
+        print(file_)
         if len(file_) < 1:
             pass
     shutil.move(file_[0], f"./files/{target_name}.csv")
@@ -70,8 +72,9 @@ def delete_old_files():
 
 def open_stats():
     check_ = pathlib.Path("./files/stats.csv")
+    # subprocess.Popen(["start", "./files/stats.csv"])
     if check_.is_file() and os.path.getsize(check_) > 0:
-        subprocess.Popen(["start", "./files/stats.csv"])
+        os.system(f"start {check_}")
         return True
     else:
         return False
