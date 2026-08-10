@@ -5,7 +5,7 @@ import fileprocessor
 import timekeeper
 import sys
 
-version_ = "1.0.2"
+version_ = "1.1.0"
 
 custom_button = b"iVBORw0KGgoAAAANSUhEUgAAAGQAAAAjCAYAAABiv6+AAAAACXBIWXMAAAOkAAADpAGRLZh1AAAC0UlEQVRoge2br24iURSHfyXBgJkaDIhBY4rB0kdAXtk+QeENtk/Q7hO0dVfyCJCgMGAwGEaAwTAGDGbzm5zLDgVaIMB0l/MlhKYJDHO+nHvunzM3OABrrQegBqAKwAdwB8A75DuugBBAH0AAoA2gaYwJ973tvYRYa+8BPIkM5HK56JXJZJDNZq9dwBrz+RyLxQLT6TR6CU0Av40xre8+/6UQay2z4IUiKMD3fRSLxdPfxX/MaDRCEARODsU0jDHBrjveKcRa+0AZ2WzWq1QqUUYox0Mh3W6XGRSKlPe9hVhr65TBbCiXy0in06riBCyXS/R6vShrRMrr52/dEOJkMCt0eDoPFMJs2SZlTYgMU28q4/zEpDzGh6+U+8MVcIpQGecnFucXiX1EKnblqICzZiiXgbFmzGUm+1eIrDNqHKq0gF8OxpoxZ+zFwSpDntxiT7kssbhz4Y0b2Q6ZaSFPjliBv0257RCVkRyFQsFdu0YhVR2qkoW1RBxUKcRXIckjDnwKueOurZIs4uCOQjzdQk8eceClfvjvvDoiIdyFVJLFOaCQVhjufcKonAlx0KKQcDabaZwTRhyEFNKOnf0qCSEO2hTS5Pg1mUzURUIw9lJDmik5cG+pkOSQI90WXbhp7wf/qcX98jDmkgwfcNNeOULs8wBeuSwS8747xo0vDBssLMPhUJVcCMZainnDXXElRLrqnmlMZ13nhzGW7HiOdzSubZ0YY34BeO90OlpPzghjyxgz1hLzFbsa5d4APOgp4umJnQ5SxuPnC3zVSspOiHo+n3fdEf/Ujf802ITNIUpmVK/GmMa2n/hdszU7IZgtPjOlVCqpmAOhiMFg4NYagTTG7eyC3/dxhLp0Rfie50VnwHyPHT0qAos1V92sE+Px2NXiQB5H2OjlPUpITIx7WOdeHtZRdsOHdpgJbWNMc984HSRkiyBPxWzARd5xU1QAfwDvPzbqRGQg7QAAAABJRU5ErkJggg=="
 
@@ -46,23 +46,36 @@ def main():
 
     if config_ is not None:
         layout = [
-            [gui.Text("Start",
-                      text_color='orange',
-                      background_color='white'),
-             gui.Spin([item for item in time_list],
-                      key="SOS",
-                      initial_value=config_["SOS"],
-                      text_color='grey',
-                      background_color='white'),
-             gui.Text("End",
-                      text_color='orange',
-                      background_color='white'),
-             gui.Spin([item for item in time_list],
-                      key="EOS",
-                      initial_value=config_["EOS"],
-                      text_color='grey',
-                      background_color='white'),
-             gui.DropDown(time_zones,
+            [
+                gui.InputText("TODAY",
+                              key='UserDate',
+                              size=(9, 1),
+                              disabled=True,
+                              text_color='grey',
+                              background_color='white'
+                              ),
+                gui.CalendarButton("Date",
+                                   image_data=custom_button,
+                                   button_color=('orange', 'white'),
+                                   border_width=0
+                                   ),
+                gui.Text("Start",
+                         text_color='orange',
+                         background_color='white'),
+                gui.Spin([item for item in time_list],
+                         key="SOS",
+                         initial_value=config_["SOS"],
+                         text_color='grey',
+                         background_color='white'),
+                gui.Text("End",
+                         text_color='orange',
+                         background_color='white'),
+                gui.Spin([item for item in time_list],
+                         key="EOS",
+                         initial_value=config_["EOS"],
+                         text_color='grey',
+                         background_color='white')],
+             [gui.DropDown(time_zones,
                           default_value=config_["Timezone"],
                           key="Timezone",
                           text_color='grey',
@@ -113,7 +126,20 @@ def main():
         ]
     else:
         layout = [
-            [gui.Text("Start",
+            [
+            gui.InputText("TODAY",
+                          key='UserDate',
+                          size=(9,1),
+                          disabled=True,
+                          text_color='grey',
+                          background_color='white'
+                          ),
+            gui.CalendarButton("Date",
+                               image_data=custom_button,
+                               button_color=('orange', 'white'),
+                               border_width=0
+        ),
+            gui.Text("Start",
                       text_color='orange',
                       background_color='white'),
              gui.Spin([item for item in time_list],
@@ -126,8 +152,8 @@ def main():
              gui.Spin([item for item in time_list],
                       key="EOS",
                       text_color='grey',
-                      background_color='white'),
-             gui.DropDown(time_zones,
+                      background_color='white')],
+             [gui.DropDown(time_zones,
                           default_value="America/Los_Angeles",
                           key="Timezone",
                           text_color='grey',
@@ -181,7 +207,7 @@ def main():
 
     while True:
         events, values = window.Read()  # values are json and can be saved/loaded easily
-        # print(events, values)
+        print(events, values)
         if events == gui.WIN_CLOSED or events is None:  # Force kill Window
             window.close()
             sys.exit()
