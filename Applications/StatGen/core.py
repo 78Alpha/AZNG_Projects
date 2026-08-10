@@ -57,7 +57,7 @@ def run_stats(config_):
     except:
         return "File Delete Failed! Close Open CSV Files!"
     try:
-        start_date, end_date, start_time, end_time = timekeeper.convert_time(start_time=config_["SOS"], end_time=config_["EOS"], time_zone=config_["Timezone"])
+        start_date, end_date, start_time, end_time = timekeeper.convert_time(start_time=config_["SOS"], end_time=config_["EOS"], time_zone=config_["Timezone"], user_date=config_["UserDate"])
     except:
         return "Time Fields Unfulfilled Or Non-Existant!"
     try:
