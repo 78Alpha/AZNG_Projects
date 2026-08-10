@@ -23,8 +23,12 @@ def time_name():
     name_ = int(time.time())
     return name_
 
-def convert_time(start_time, end_time, time_zone):
-    today_ = date.today().strftime("%Y-%m-%d")
+def convert_time(start_time, end_time, time_zone, user_date):
+    if user_date == "TODAY":
+        today_ = date.today().strftime("%Y-%m-%d")
+    else:
+        today_ = user_date.split(" ")[0]
+        print(today_)
     start_ = f"{today_} {start_time}"
     end_ = f"{today_} {end_time}"
     gmt_start = pytz.timezone(time_zone).localize(datetime.strptime(start_, '%Y-%m-%d %H:%M:%S')).astimezone(pytz.utc)
